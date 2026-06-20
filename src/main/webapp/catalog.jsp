@@ -20,6 +20,8 @@
 </head>
 <body>
 
+<jsp:include page="/jsp/header.jsp" />
+
 <h1>Catalogo Auto</h1>
 
 

@@ -51,3 +51,68 @@ h1{
 
     gap: 20px;
 }
+
+.site-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    background-color: #111827;
+
+    color: white;
+
+    padding:  15px 30px;
+
+    margin: -20px -20px 30px -20px;
+
+}
+
+.logo {
+    font-size: 24px;
+
+    font-weight: bold;
+
+}
+
+.navbar a {
+    color: white;
+
+    text-decoration: none;
+
+    margin-left: 20px;
+
+}
+
+.navbar a:hover{
+    text-decoration: underline;
+}
+
+.vehicle-details-card {
+
+    max-width: 800px;
+
+    margin: 40px auto;
+
+    background-color: white;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    border: 1px solid #ddd;
+
+    box-shadow:  0 2px 8px rgba(0, 0, 0, 0.15);
+
+
+
+}
+
+.vehicle-details-card h1 {
+
+    text-align:  center;
+
+    margin-bottom: 30px;
+}
