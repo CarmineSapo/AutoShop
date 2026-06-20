@@ -29,23 +29,29 @@
     </c:when>
 
     <c:otherwise>
-        <c:forEach var="vehicle" items="${vehicles}">
-            <div class="vehicle-card">
-                <h2>${vehicle.brand} ${vehicle.model}</h2>
-                <p>Anno: ${vehicle.productionYear}</p>
-                <p>Km: ${vehicle.km}</p>
-                <p>Carburante: ${vehicle.fuelType}</p>
-                <p>Cambio: ${vehicle.transmission}</p>
-                <p>Prezzo: ${vehicle.price}</p>
-                <p>Descrizione: ${vehicle.description}</p>
 
-                <a  class="details-button"
+        <div class="vehicle-containter">
+
+            <c:forEach var="vehicle" items="${vehicles}">
+                <div class="vehicle-card">
+                    <h2>${vehicle.brand} ${vehicle.model}</h2>
+                    <p>Anno: ${vehicle.productionYear}</p>
+                    <p>Km: ${vehicle.km}</p>
+                    <p>Carburante: ${vehicle.fuelType}</p>
+                    <p>Cambio: ${vehicle.transmission}</p>
+                    <p>Prezzo: ${vehicle.price}</p>
+                    <p>Descrizione: ${vehicle.description}</p>
+
+                    <a  class="details-button"
                         href="${pageContext.request.contextPath}/vehicle?id=${vehicle.id}">
 
-                    Vedi dettagli
-                </a>
-            </div>
-        </c:forEach>
+                        Vedi dettagli
+                    </a>
+                </div>
+            </c:forEach>
+
+        </div>
+
     </c:otherwise>
 </c:choose>
 
