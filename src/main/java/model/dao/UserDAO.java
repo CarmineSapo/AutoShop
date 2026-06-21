@@ -43,6 +43,36 @@ public class UserDAO {
     }
 
 
+    public User findByUsername(String username) throws SQLException {
+
+        String sql = "SELECT * FROM users WHERE username = ?";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, username);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    User user = new User();
+
+                    user.setId(resultSet.getInt("id"));
+                    user.setUsername(resultSet.getString("username"));
+                    user.setEmail(resultSet.getString("email"));
+                    user.setPasswordHash(resultSet.getString("password_hash"));
+                    user.setRole(resultSet.getString("role"));
+
+                    return user;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
     public void save (User user) throws SQLException{
 
         String sql = """

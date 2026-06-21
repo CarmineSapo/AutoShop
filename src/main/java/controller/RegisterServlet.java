@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.bean.User;
 import model.dao.UserDAO;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,10 +34,19 @@ public class RegisterServlet extends HttpServlet {
         }
 
         try{
-            User existingUser = userDAO.findByEmail(email);
+                    User existingEmail = userDAO.findByEmail(email);
 
-                    if (existingUser != null){
+                    if (existingEmail != null){
                         request.setAttribute("error", "Email già registrata");
+                        request.getRequestDispatcher("/register.jsp")
+                                .forward(request, response);
+                        return;
+                    }
+
+                    User existingUsername = userDAO.findByUsername(username);
+
+                    if (existingUsername != null){
+                        request.setAttribute("error", "Username già registrato");
                         request.getRequestDispatcher("/register.jsp")
                                 .forward(request, response);
                         return;
@@ -47,8 +57,8 @@ public class RegisterServlet extends HttpServlet {
                     user.setUsername(username);
                     user.setEmail(email);
 
-                    //da cambiare con BCrypt
-                    user.setPasswordHash(password);
+                    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                    user.setPasswordHash(hashedPassword);
 
                     user.setRole("CUSTOMER");
 

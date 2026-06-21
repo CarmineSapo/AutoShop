@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <!DOCTYPE html>
 <html>
@@ -25,6 +26,10 @@
 <div class="form-card">
 
   <h1>Registrati</h1>
+
+  <c:if test="${not empty error}">
+    <p class="error-message">${error}</p>
+  </c:if>
 
   <form action="${pageContext.request.contextPath}/register" method="post">
 

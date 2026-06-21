@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.bean.User;
 import model.dao.UserDAO;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,7 +37,7 @@ public class LoginServlet extends HttpServlet {
 
             User user = userDAO.findByEmail(email);
 
-            if (user == null || !user.getPasswordHash().equals(password)){
+            if (user == null || !BCrypt.checkpw(password, user.getPasswordHash())){
 
                 request.setAttribute("error", "Email o password non corretti");
                 request.getRequestDispatcher("/login.jsp")
