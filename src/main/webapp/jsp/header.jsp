@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: gemel
@@ -9,16 +10,28 @@
 
 
 <header class="site-header">
-    <div class="logo">
-        AutoShop
+
+    <div class="header-left">
+        <div class="logo">AutoShop</div>
     </div>
 
-    <nav class="navbar">
+    <nav class="header-center">
         <a href="${pageContext.request.contextPath}/">Home</a>
         <a href="${pageContext.request.contextPath}/catalog">Catalogo</a>
-        <a href="${pageContext.request.contextPath}/login.jsp">Login</a>
-        <a href="${pageContext.request.contextPath}/register.jsp">Registrati</a>
     </nav>
 
-</header>
+    <div class="header-right">
+        <c:choose>
+            <c:when test="${empty sessionScope.user}">
+                <a href="${pageContext.request.contextPath}/login.jsp">Login</a>
+                <a href="${pageContext.request.contextPath}/register.jsp">Registrati</a>
+            </c:when>
 
+            <c:otherwise>
+                <span class="user-greeting">Ciao, ${sessionScope.user.username}</span>
+                <a href="${pageContext.request.contextPath}/logout">Logout</a>
+            </c:otherwise>
+        </c:choose>
+    </div>
+
+</header>
