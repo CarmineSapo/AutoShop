@@ -29,7 +29,11 @@
 
             <c:otherwise>
                 <span class="user-greeting">Ciao, ${sessionScope.user.username}</span>
+
+                <a href="${pageContext.request.contextPath}/profile">Profilo</a>
+
                 <a href="${pageContext.request.contextPath}/logout">Logout</a>
+
             </c:otherwise>
         </c:choose>
     </div>

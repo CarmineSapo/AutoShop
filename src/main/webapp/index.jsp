@@ -2,12 +2,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+
+    <meta charset="UTF-8">
+    <title>Autoshop</title>
+
+    <link rel="stylesheet"
+    href="${pageContext.request.contextPath}/css/style.css">
+
 </head>
+
 <body>
-<h1><%= "Hello World!" %>
-</h1>
-<br/>
-<a href="hello-servlet">Hello Servlet</a>
+
+<jsp:include page="/jsp/header.jsp"/>
+
+    <div class="hero">
+
+        <h1>Benvenuto su Autoshop</h1>
+
+        <P>
+            Trova l'auto perfetta per te.
+        </P>
+
+        <a class="details-button"
+           href="${pageContext.request.contextPath}/catalog">
+
+            Vai al catalogo
+
+        </a>
+
+    </div>
+
+
 </body>
 </html>
