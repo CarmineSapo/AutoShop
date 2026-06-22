@@ -38,6 +38,11 @@
     Torna al catalogo
   </a>
 
+  <a class="details-button"
+     href="${pageContext.request.contextPath}/add-to-cart?id=${vehicle.id}">
+    Aggiungi al carrello
+  </a>
+
 </div>
 
 </body>

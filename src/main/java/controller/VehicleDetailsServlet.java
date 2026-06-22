@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.bean.Vehicle;
-import model.dao.VehicleDao;
+import model.dao.VehicleDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 @WebServlet("/vehicle")
 public class VehicleDetailsServlet extends HttpServlet {
 
-    private final VehicleDao vehicleDao = new VehicleDao();
+    private final VehicleDAO vehicleDao = new VehicleDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

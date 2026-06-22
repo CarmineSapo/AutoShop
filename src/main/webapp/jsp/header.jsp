@@ -18,6 +18,7 @@
     <nav class="header-center">
         <a href="${pageContext.request.contextPath}/">Home</a>
         <a href="${pageContext.request.contextPath}/catalog">Catalogo</a>
+        <a href="${pageContext.request.contextPath}/cart">Carrello</a>
     </nav>
 
     <div class="header-right">
