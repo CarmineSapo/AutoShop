@@ -33,6 +33,8 @@
 
                 <a href="${pageContext.request.contextPath}/profile">Profilo</a>
 
+                <a href="${pageContext.request.contextPath}/my-orders">I miei ordini</a>
+
                 <a href="${pageContext.request.contextPath}/logout">Logout</a>
 
             </c:otherwise>

@@ -51,6 +51,14 @@
       <hr>
 
       <h3>Totale: € ${sessionScope.cart.total}</h3>
+
+      <form action="${pageContext.request.contextPath}/checkout"
+            method="post">
+
+        <button class="details-button" type="submit">
+          Conferma ordine
+        </button>
+      </form>
     </c:otherwise>
   </c:choose>
 </div>
