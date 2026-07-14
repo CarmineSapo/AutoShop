@@ -9,18 +9,18 @@ import java.util.List;
 
 public class VehicleDAO {
 
-    public List<Vehicle> getAllVehicles() throws SQLException{
+    public List<Vehicle> getAllVehicles() throws SQLException {
 
         List<Vehicle> vehicles = new ArrayList<>();
 
         String sql = "SELECT * FROM vehicles WHERE status = 'AVAILABLE'";
 
-        try(
+        try (
                 Connection connection = DBConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery();
-                ){
-            while ( resultSet.next()){
+        ) {
+            while (resultSet.next()) {
 
                 Vehicle vehicle = new Vehicle();
 
@@ -44,19 +44,19 @@ public class VehicleDAO {
 
     }
 
-    public Vehicle getVehicleById(int id) throws  SQLException{
+    public Vehicle getVehicleById(int id) throws SQLException {
 
         String sql = "SELECT * FROM vehicles WHERE id = ?";
 
-        try(
+        try (
                 Connection connection = DBConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql);
-                ){
+        ) {
             statement.setInt(1, id);
 
-            try( ResultSet resultSet = statement.executeQuery()){
+            try (ResultSet resultSet = statement.executeQuery()) {
 
-                if (resultSet.next()){
+                if (resultSet.next()) {
 
                     Vehicle vehicle = new Vehicle();
 
@@ -84,7 +84,7 @@ public class VehicleDAO {
 
 
     public List<Vehicle> getVehiclesByDealer(int dealerId)
-        throws SQLException {
+            throws SQLException {
 
         List<Vehicle> vehicles = new ArrayList<>();
 
@@ -99,12 +99,12 @@ public class VehicleDAO {
                 Connection connection = DBConnection.getConnection();
                 PreparedStatement statement =
                         connection.prepareStatement(sql)
-                ){
+        ) {
             statement.setInt(1, dealerId);
 
-            try (ResultSet resultSet = statement.executeQuery()){
+            try (ResultSet resultSet = statement.executeQuery()) {
 
-                while (resultSet.next()){
+                while (resultSet.next()) {
 
                     Vehicle vehicle = new Vehicle();
 
@@ -144,31 +144,24 @@ public class VehicleDAO {
     }
 
 
-
-
-
-
-
-
-
     public int insertVehicle(Vehicle vehicle) throws SQLException {
         //Il valore restituito è l'id generato dal database
 
         String sql = """
-            INSERT INTO vehicles (
-                dealer_id,
-                brand,
-                model,
-                production_year,
-                km,
-                fuel_type,
-                transmission,
-                price,
-                description,
-                status
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'AVAILABLE')
-            """;
+                INSERT INTO vehicles (
+                    dealer_id,
+                    brand,
+                    model,
+                    production_year,
+                    km,
+                    fuel_type,
+                    transmission,
+                    price,
+                    description,
+                    status
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'AVAILABLE')
+                """;
 
         try (
                 Connection connection = DBConnection.getConnection();
@@ -210,6 +203,159 @@ public class VehicleDAO {
         }
     }
 
+
+    public Vehicle getVehicleByIdAndDealer(int vehicleId, int dealerId)  //prendiamo un veicolo del dealer
+            throws SQLException {
+        String sql = """
+                SELECT
+                    id,
+                    dealer_id,
+                    brand,
+                    model,
+                    production_year,
+                    km,
+                    fuel_type,
+                    transmission,
+                    price,
+                    description,
+                    status
+                FROM vehicles
+                WHERE id = ?
+                  AND dealer_id = ?
+                """; //prendiamo il veicolo con id richiesto e con proprietario il dealer autenticato
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+            statement.setInt(1, vehicleId);
+            statement.setInt(2, dealerId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (!resultSet.next()) {
+                    return null;
+                }
+
+                Vehicle vehicle = new Vehicle();
+
+                vehicle.setId(resultSet.getInt("id"));
+                vehicle.setDealerId(
+                        resultSet.getInt("dealer_id")
+                );
+                vehicle.setBrand(
+                        resultSet.getString("brand")
+                );
+                vehicle.setModel(
+                        resultSet.getString("model")
+                );
+                vehicle.setProductionYear(
+                        resultSet.getInt("production_year")
+                );
+                vehicle.setKm(
+                        resultSet.getInt("km")
+                );
+                vehicle.setFuelType(
+                        resultSet.getString("fuel_type")
+                );
+                vehicle.setTransmission(
+                        resultSet.getString("transmission")
+                );
+                vehicle.setPrice(
+                        resultSet.getDouble("price")
+                );
+                vehicle.setDescription(
+                        resultSet.getString("description")
+                );
+                vehicle.setStatus(
+                        resultSet.getString("status")
+                );
+
+                return vehicle;
+            }
+        }
+    }
+
+
+    public boolean updateVehicle(Vehicle vehicle) //Aggiorna veicolo
+            throws SQLException {
+
+        String sql = """
+                UPDATE vehicles
+                SET
+                    brand = ?,
+                    model = ?,
+                    production_year = ?,
+                    km = ?,
+                    fuel_type = ?,
+                    transmission = ?,
+                    price = ?,
+                    description = ?
+                WHERE id = ?
+                  AND dealer_id = ?
+                """;
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+            statement.setString(
+                    1,
+                    vehicle.getBrand()
+            );
+
+            statement.setString(
+                    2,
+                    vehicle.getModel()
+            );
+
+            statement.setInt(
+                    3,
+                    vehicle.getProductionYear()
+            );
+
+            statement.setInt(
+                    4,
+                    vehicle.getKm()
+            );
+
+            statement.setString(
+                    5,
+                    vehicle.getFuelType()
+            );
+
+            statement.setString(
+                    6,
+                    vehicle.getTransmission()
+            );
+
+            statement.setDouble(
+                    7,
+                    vehicle.getPrice()
+            );
+
+            statement.setString(
+                    8,
+                    vehicle.getDescription()
+            );
+
+            statement.setInt(
+                    9,
+                    vehicle.getId()
+            );
+
+            statement.setInt(
+                    10,
+                    vehicle.getDealerId()
+            );
+
+            int affectedRows = statement.executeUpdate();
+
+            return affectedRows == 1;
+        }
+    }
 
 
 }

@@ -79,7 +79,7 @@
               </a>
 
               <a class="details-button"
-                 href="${pageContext.request.contextPath}/dealer/edit-vehicle?=${vehicle.id}">
+                 href="${pageContext.request.contextPath}/dealer/edit-vehicle?id=${vehicle.id}">
                 Modifica
               </a>
 
