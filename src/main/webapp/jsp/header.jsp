@@ -35,6 +35,20 @@
 
                 <a href="${pageContext.request.contextPath}/my-orders">I miei ordini</a>
 
+                <c:if test="${sessionScope.user.role eq 'DEALER'}">
+
+                    <a href="${pageContext.request.contextPath}/dealer/dashboard">
+                        Area dealer
+                    </a>
+                </c:if>
+
+                <c:if test="${sessionScope.user.role eq 'ADMIN'}">
+
+                    <a href="${pageContext.request.contextPath}/dealer/dashboard">
+                        Area dealer
+                    </a>
+                </c:if>
+
                 <a href="${pageContext.request.contextPath}/logout">Logout</a>
 
             </c:otherwise>
