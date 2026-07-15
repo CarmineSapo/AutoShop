@@ -1,93 +1,101 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
-    const cartPage = document.getElementById("cart-page");
+    const cartPage =
+        document.getElementById("cart-page");
 
-    if( cartPage === null){
+    if (cartPage === null) {
         return;
     }
 
-    const contextPath = cartPage.dataset.contextPath;
+    const contextPath =
+        cartPage.dataset.contextPath;
 
-    const checkboxes = document.querySelectorAll( ".cart-selection-checkbox");
+    const checkboxes =
+        document.querySelectorAll(
+            ".cart-selection-checkbox"
+        );
 
-    const selectedCountElement = document.getElementById("selected-count");
+    const selectedCount =
+        document.getElementById(
+            "selected-count"
+        );
 
-    const selectedTotalElement = document.getElementById("selected-total");
+    const selectedTotal =
+        document.getElementById(
+            "selected-total"
+        );
 
-    const checkoutButton = document.getElementById("checkout-button");
+    const checkoutButton =
+        document.getElementById(
+            "checkout-button"
+        );
 
-    function updateCheckoutButton(){
+    checkboxes.forEach(function (checkbox) {
 
-        const selectedCount = Number(selectedCountElement.textContent);
+        checkbox.addEventListener(
+            "change",
+            function () {
 
-        checkoutButton.disabled = selectedCount === 0;
-    }
+                const parameters =
+                    new URLSearchParams();
 
-    checkboxes.forEach( (checkbox) => {
+                parameters.append(
+                    "vehicleId",
+                    checkbox.dataset.vehicleId
+                );
 
-        checkbox.addEventListener("change", async () =>{
+                parameters.append(
+                    "selected",
+                    checkbox.checked
+                );
 
-            /*
-                * Conserviamo il valore precedente.
-                * Se la richiesta fallisce, ripristiniamo
-                * graficamente la checkbox.
-                */
-
-            const  previusValue = !checkbox.checked;
-
-            checkbox.disabled = true;
-
-            const parameters = new URLSearchParams();
-
-            parameters.append( "vehicleId", checkbox.dataset.vehicleId);
-
-            parameters.append ( "selected", String (checkbox.checked));
-
-            try {
-                const response = await fetch(
-                    contextPath + "/cart/change-selection",
+                fetch(
+                    contextPath
+                    + "/cart/change-selection",
                     {
                         method: "POST",
 
                         headers: {
-                            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
                         },
 
                         body: parameters.toString()
                     }
-                );
+                )
+                    .then(function (response) {
 
-                const data = await response.json();
+                        if (!response.ok) {
+                            throw new Error(
+                                "Errore nella richiesta"
+                            );
+                        }
 
-                if ( !response.ok || data.success !== true){
+                        return response.json();
+                    })
 
-                    throw new Error( data.message || "Errore durante l'aggiornamento");
-                }
+                    .then(function (data) {
 
-                selectedCountElement.textContent = data.selectedCount;
+                        selectedCount.textContent =
+                            data.selectedCount;
 
-                selectedTotalElement.textContent = Number(
-                    data.selectedTotal).toLocaleString(
-                        "it-IT",
-                    {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    }
-                );
+                        selectedTotal.textContent =
+                            data.selectedTotal.toFixed(2);
 
-                updateCheckoutButton();
+                        checkoutButton.disabled =
+                            data.selectedCount === 0;
+                    })
 
-            } catch (error){
+                    .catch(function () {
 
-                checkbox.checked = previusValue;
+                        alert(
+                            "Errore durante l'aggiornamento del carrello"
+                        );
 
-                alert( "Non è stato possibile aggiornare il carrello.");
-
-            } finally {
-                checkbox.disabled = false;
+                        checkbox.checked =
+                            !checkbox.checked;
+                    });
             }
-        });
+        );
     });
-
-    updateCheckoutButton();
-})
+});

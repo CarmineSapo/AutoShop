@@ -17,47 +17,17 @@ import java.util.Map;
 
 public class OrderDAO {
 
-    public int createOrder(User user, Cart cart) throws SQLException{
+    public int createOrder(User user, Cart cart)
+            throws SQLException {
 
-        if (user == null) {
-            throw new IllegalArgumentException(
-                    "L'utente non può essere null"
-            );
-        }
-
-        if (cart == null) {
-            throw new IllegalArgumentException(
-                    "Il carrello non può essere null"
-            );
-        }
-
-        /*
-         * Creiamo una copia della lista degli elementi selezionati.
-         * In questo modo lavoriamo su una lista stabile durante
-         * l'intera transazione.
-         */
         List<CartItem> selectedItems =
-                List.copyOf(cart.getSelectedItems());
+                cart.getSelectedItems();
 
         if (selectedItems.isEmpty()) {
             throw new SQLException(
-                    "Nessun veicolo selezionato per l'acquisto"
+                    "Nessun veicolo selezionato"
             );
         }
-
-        /*
-         * FOR UPDATE blocca temporaneamente la riga del veicolo
-         * fino al commit o rollback della transazione.
-         *
-         * In questo modo due utenti non possono acquistare
-         * contemporaneamente lo stesso veicolo.
-         */
-        String checkVehicleSql = """
-            SELECT price, status, is_active
-            FROM vehicles
-            WHERE id = ?
-            FOR UPDATE
-            """;
 
         String insertOrderSql = """
             INSERT INTO orders (
@@ -82,106 +52,18 @@ public class OrderDAO {
             SET status = 'SOLD'
             WHERE id = ?
               AND status = 'AVAILABLE'
-              AND is_active = TRUE
             """;
 
         try (Connection connection =
                      DBConnection.getConnection()) {
 
-            /*
-             * Memorizziamo il precedente valore per ripristinarlo
-             * alla fine del metodo.
-             */
-            boolean previousAutoCommit =
-                    connection.getAutoCommit();
-
             connection.setAutoCommit(false);
 
             try {
-                /*
-                 * I prezzi vengono riletti dal database.
-                 * Non ci fidiamo del prezzo presente nel carrello,
-                 * perché potrebbe essere stato modificato dopo
-                 * l'aggiunta del veicolo.
-                 */
-                Map<Integer, Double> currentPrices =
-                        new LinkedHashMap<>();
-
-                double totalPrice = 0.0;
-
-                try (PreparedStatement checkStatement =
-                             connection.prepareStatement(
-                                     checkVehicleSql
-                             )) {
-
-                    for (CartItem item : selectedItems) {
-
-                        int vehicleId =
-                                item.getVehicle().getId();
-
-                        checkStatement.setInt(
-                                1,
-                                vehicleId
-                        );
-
-                        try (ResultSet resultSet =
-                                     checkStatement.executeQuery()) {
-
-                            /*
-                             * Il veicolo potrebbe essere stato
-                             * eliminato o potrebbe non esistere.
-                             */
-                            if (!resultSet.next()) {
-                                throw new SQLException(
-                                        "Il veicolo con ID "
-                                                + vehicleId
-                                                + " non esiste"
-                                );
-                            }
-
-                            String status =
-                                    resultSet.getString(
-                                            "status"
-                                    );
-
-                            boolean active =
-                                    resultSet.getBoolean(
-                                            "is_active"
-                                    );
-
-                            /*
-                             * Il veicolo deve essere ancora disponibile
-                             * e l'inserzione deve essere attiva.
-                             */
-                            if (!"AVAILABLE".equals(status)
-                                    || !active) {
-
-                                throw new SQLException(
-                                        "Il veicolo con ID "
-                                                + vehicleId
-                                                + " non è più disponibile"
-                                );
-                            }
-
-                            double currentPrice =
-                                    resultSet.getDouble(
-                                            "price"
-                                    );
-
-                            currentPrices.put(
-                                    vehicleId,
-                                    currentPrice
-                            );
-
-                            totalPrice += currentPrice;
-                        }
-                    }
-                }
-
-                int generatedOrderId;
+                int orderId;
 
                 /*
-                 * Inserimento dell'ordine principale.
+                 * Inserimento dell'ordine.
                  */
                 try (PreparedStatement orderStatement =
                              connection.prepareStatement(
@@ -196,7 +78,7 @@ public class OrderDAO {
 
                     orderStatement.setDouble(
                             2,
-                            totalPrice
+                            cart.getSelectedTotal()
                     );
 
                     int affectedRows =
@@ -204,7 +86,7 @@ public class OrderDAO {
 
                     if (affectedRows != 1) {
                         throw new SQLException(
-                                "Creazione dell'ordine non riuscita"
+                                "Errore durante la creazione dell'ordine"
                         );
                     }
 
@@ -213,17 +95,18 @@ public class OrderDAO {
 
                         if (!generatedKeys.next()) {
                             throw new SQLException(
-                                    "ID dell'ordine non restituito"
+                                    "ID ordine non generato"
                             );
                         }
 
-                        generatedOrderId =
+                        orderId =
                                 generatedKeys.getInt(1);
                     }
                 }
 
                 /*
-                 * Inseriamo tutte le righe in order_items.
+                 * Inserimento dei veicoli selezionati
+                 * nella tabella order_items.
                  */
                 try (PreparedStatement itemStatement =
                              connection.prepareStatement(
@@ -232,53 +115,29 @@ public class OrderDAO {
 
                     for (CartItem item : selectedItems) {
 
-                        int vehicleId =
-                                item.getVehicle().getId();
-
-                        double purchasePrice =
-                                currentPrices.get(vehicleId);
-
                         itemStatement.setInt(
                                 1,
-                                generatedOrderId
+                                orderId
                         );
 
                         itemStatement.setInt(
                                 2,
-                                vehicleId
+                                item.getVehicle().getId()
                         );
 
                         itemStatement.setDouble(
                                 3,
-                                purchasePrice
+                                item.getPrice()
                         );
 
                         itemStatement.addBatch();
                     }
 
-                    int[] results =
-                            itemStatement.executeBatch();
-
-                    /*
-                     * Controlliamo che nessuna operazione del batch
-                     * sia fallita.
-                     */
-                    for (int result : results) {
-
-                        if (result
-                                == Statement.EXECUTE_FAILED) {
-
-                            throw new SQLException(
-                                    "Inserimento di un elemento "
-                                            + "dell'ordine non riuscito"
-                            );
-                        }
-                    }
+                    itemStatement.executeBatch();
                 }
 
                 /*
-                 * Dopo aver creato l'ordine, contrassegniamo
-                 * come venduti soltanto i veicoli selezionati.
+                 * Aggiornamento dello stato dei veicoli.
                  */
                 try (PreparedStatement updateStatement =
                              connection.prepareStatement(
@@ -287,67 +146,40 @@ public class OrderDAO {
 
                     for (CartItem item : selectedItems) {
 
-                        int vehicleId =
-                                item.getVehicle().getId();
-
                         updateStatement.setInt(
                                 1,
-                                vehicleId
+                                item.getVehicle().getId()
                         );
 
                         int affectedRows =
                                 updateStatement.executeUpdate();
 
-                        /*
-                         * Grazie al controllo nella WHERE, la modifica
-                         * riesce soltanto se il veicolo è ancora
-                         * AVAILABLE e attivo.
-                         */
                         if (affectedRows != 1) {
                             throw new SQLException(
-                                    "Impossibile acquistare il veicolo "
-                                            + "con ID "
-                                            + vehicleId
+                                    "Uno dei veicoli non è più disponibile"
                             );
                         }
                     }
                 }
 
-                /*
-                 * Tutte le operazioni sono riuscite:
-                 * rendiamo definitive le modifiche.
-                 */
                 connection.commit();
 
-                return generatedOrderId;
+                return orderId;
 
-            } catch (SQLException | RuntimeException e) {
+            } catch (SQLException e) {
 
-                /*
-                 * Se fallisce anche una sola operazione,
-                 * annulliamo l'intera transazione.
-                 */
-                try {
-                    connection.rollback();
-
-                } catch (SQLException rollbackException) {
-                    e.addSuppressed(rollbackException);
-                }
+                connection.rollback();
 
                 throw e;
 
             } finally {
-                /*
-                 * Ripristiniamo la configurazione originale
-                 * della connessione.
-                 */
-                connection.setAutoCommit(
-                        previousAutoCommit
-                );
+
+                connection.setAutoCommit(true);
             }
         }
-
     }
+
+
     public List<Order> getOrderByUser( int userId) throws  SQLException{
 
         List<Order> orders = new ArrayList<>();
