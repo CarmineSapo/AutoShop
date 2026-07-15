@@ -399,3 +399,24 @@ h1{
 .form-errors ul {
     margin-bottom: 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+.inline-form button {
+    font: inherit;
+    cursor: pointer;
+}

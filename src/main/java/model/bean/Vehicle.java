@@ -13,6 +13,7 @@ public class Vehicle {
     private double price;
     private String description;
     private String status;
+    private boolean active;
 
     public Vehicle() {}
 
@@ -112,5 +113,14 @@ public class Vehicle {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

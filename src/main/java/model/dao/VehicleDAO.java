@@ -13,7 +13,7 @@ public class VehicleDAO {
 
         List<Vehicle> vehicles = new ArrayList<>();
 
-        String sql = "SELECT * FROM vehicles WHERE status = 'AVAILABLE'";
+        String sql = "SELECT * FROM vehicles WHERE status = 'AVAILABLE' AND is_active = TRUE";
 
         try (
                 Connection connection = DBConnection.getConnection();
@@ -35,6 +35,7 @@ public class VehicleDAO {
                 vehicle.setPrice(resultSet.getDouble("price"));
                 vehicle.setDescription(resultSet.getString("description"));
                 vehicle.setStatus(resultSet.getString("status"));
+                vehicle.setActive(resultSet.getBoolean("is_active"));
 
                 vehicles.add(vehicle);
             }
@@ -46,7 +47,7 @@ public class VehicleDAO {
 
     public Vehicle getVehicleById(int id) throws SQLException {
 
-        String sql = "SELECT * FROM vehicles WHERE id = ?";
+        String sql = "SELECT * FROM vehicles WHERE id = ? AND is_active = TRUE";
 
         try (
                 Connection connection = DBConnection.getConnection();
@@ -135,6 +136,8 @@ public class VehicleDAO {
 
                     vehicle.setStatus(resultSet.getString("status"));
 
+                    vehicle.setActive(resultSet.getBoolean("is_active"));
+
                     vehicles.add(vehicle);
                 }
             }
@@ -218,7 +221,8 @@ public class VehicleDAO {
                     transmission,
                     price,
                     description,
-                    status
+                    status,
+                    is_active
                 FROM vehicles
                 WHERE id = ?
                   AND dealer_id = ?
@@ -270,6 +274,9 @@ public class VehicleDAO {
                 );
                 vehicle.setStatus(
                         resultSet.getString("status")
+                );
+                vehicle.setActive(
+                        resultSet.getBoolean("is_active")
                 );
 
                 return vehicle;
@@ -350,6 +357,36 @@ public class VehicleDAO {
                     10,
                     vehicle.getDealerId()
             );
+
+            int affectedRows = statement.executeUpdate();
+
+            return affectedRows == 1;
+        }
+    }
+
+
+    public boolean updateVehicleVisibility(
+            int vehicleId,
+            int dealerId,
+            boolean active
+    ) throws SQLException {
+
+        String sql = """
+                UPDATE vehicles
+                SET is_active = ?
+                WHERE id = ?
+                  AND dealer_id = ?
+                """;
+
+        try (
+                Connection connection = DBConnection.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+            statement.setBoolean(1, active);
+            statement.setInt(2, vehicleId);
+            statement.setInt(3, dealerId);
 
             int affectedRows = statement.executeUpdate();
 

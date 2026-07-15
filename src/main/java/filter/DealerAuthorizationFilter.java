@@ -12,6 +12,13 @@ import java.io.IOException;
 
 @WebFilter("/dealer/*")
 public class DealerAuthorizationFilter implements Filter {
+
+    /*
+    * nome dell'attributo request nel quale il filtro
+    * inserisce il dealer autenticato
+    */
+    public static final String DEALER_ATTRIBUTE = "authenticatedDealer";
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
@@ -21,32 +28,49 @@ public class DealerAuthorizationFilter implements Filter {
 
         HttpSession session = request.getSession(false);
 
-        User user = null;
+        //User user = null;
 
-        if (session != null){
-            user = (User) session.getAttribute("user");
-        }
+        /*
+        * l'utente non possiede una sessione
+        */
 
-        if (user == null){
+        if (session == null){
             response.sendRedirect( request.getContextPath() + "/login.jsp");
             return;
         }
 
-        String role = user.getRole();
+        Object userAttribute = session.getAttribute("user");
 
+        /*
+        * la sessione esiste, ma non contiene
+        * un utente autenticato valido
+        */
 
-        boolean authorization = "DEALER".equals(role)
-                || "ADMIN".equals(role);
-
-        if (authorization){
-            filterChain.doFilter(request, response);
+        if (!(userAttribute instanceof User)){
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
         }
-        else{
-            response.sendError(
-                    HttpServletResponse.SC_FORBIDDEN,
-                    "Non sei autorizzato ad accedere all'area concessionario"
-            );
+
+        User user = (User) userAttribute;
+
+        /*
+        * l'utente è autenticato ma non è un dealer
+        */
+        if(!"DEALER".equals(user.getRole())){
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso consentito soltanto ai dealer");
+            return;
         }
+
+        /*
+        * il filtro mette il dealer nella request.
+        * le Servler protette potranno recuperarlo
+        * senza ripetere i controlli
+        */
+
+        request.setAttribute(DEALER_ATTRIBUTE, user);
+
+        filterChain.doFilter(request, response);
+
 
 
     }

@@ -1,12 +1,12 @@
 package controller;
 
 
+import filter.DealerAuthorizationFilter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import model.bean.User;
 import model.bean.Vehicle;
 import model.dao.VehicleDAO;
@@ -46,12 +46,6 @@ public class AddVehicleServlet extends HttpServlet{
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException{
 
-        User dealer = getAuthorizedDealer(request, response);
-
-        if (dealer == null){
-            return;
-        }
-
 
         request.getRequestDispatcher("/WEB-INF/dealer/add-vehicle.jsp")
                 .forward(request,response);
@@ -68,16 +62,9 @@ public class AddVehicleServlet extends HttpServlet{
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException{
 
-
-        User dealer = getAuthorizedDealer(request, response);
-
-        if(dealer == null){
-            return;
-        }
-
-
-
         request.setCharacterEncoding("UTF-8");
+
+        User dealer = (User) request.getAttribute(DealerAuthorizationFilter.DEALER_ATTRIBUTE);
 
         List<String> errors = new ArrayList<>();
 
@@ -233,56 +220,6 @@ public class AddVehicleServlet extends HttpServlet{
 
 
 //Utility
-
-    private User getAuthorizedDealer( //
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
-
-        HttpSession session = request.getSession(false);
-
-        /*
-         * Primo controllo: la sessione deve esistere.
-         */
-        if (session == null) {
-            response.sendRedirect(
-                    request.getContextPath() + "/login.jsp"
-            );
-
-            return null;
-        }
-
-        Object userAttribute =
-                session.getAttribute("user");
-
-        /*
-         * Secondo controllo: nella sessione deve esserci
-         * un oggetto User.
-         */
-        if (!(userAttribute instanceof User)) {
-            response.sendRedirect(
-                    request.getContextPath() + "/login.jsp"
-            );
-
-            return null;
-        }
-
-        User user = (User) userAttribute;
-
-        /*
-         * Terzo controllo: l'utente deve essere un dealer.
-         */
-        if (!"DEALER".equals(user.getRole())) {
-            response.sendError(
-                    HttpServletResponse.SC_FORBIDDEN,
-                    "Accesso consentito soltanto ai dealer"
-            );
-
-            return null;
-        }
-
-        return user;
-    }
 
 
 

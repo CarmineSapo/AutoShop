@@ -1,5 +1,6 @@
 package controller;
 
+import filter.DealerAuthorizationFilter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -44,11 +45,7 @@ public class EditVehicleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        User dealer = getAuthorizedDealer(request, response);
-
-        if (dealer == null) {
-            return;
-        }
+    User dealer = (User) request.getAttribute(DealerAuthorizationFilter.DEALER_ATTRIBUTE);
 
         Integer vehicleId = parsePositiveInteger(request.getParameter("id"));
 
@@ -92,11 +89,7 @@ public class EditVehicleServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        User dealer = getAuthorizedDealer(request, response);
-
-        if (dealer == null) {
-            return;
-        }
+        User dealer = (User) request.getAttribute(DealerAuthorizationFilter.DEALER_ATTRIBUTE);
 
         Integer vehicleId = parsePositiveInteger(request.getParameter("id"));
 
@@ -326,56 +319,7 @@ public class EditVehicleServlet extends HttpServlet {
 
     }
 
-    private User getAuthorizedDealer(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
 
-        HttpSession session =
-                request.getSession(false);
-
-        /*
-         * Controllo 1: la sessione deve esistere.
-         */
-        if (session == null) {
-            response.sendRedirect(
-                    request.getContextPath()
-                            + "/login.jsp"
-            );
-            return null;
-        }
-
-        Object userAttribute =
-                session.getAttribute("user");
-
-        /*
-         * Controllo 2: l'attributo deve essere
-         * effettivamente un oggetto User.
-         */
-        if (!(userAttribute instanceof User)) {
-            response.sendRedirect(
-                    request.getContextPath()
-                            + "/login.jsp"
-            );
-            return null;
-        }
-
-        User user = (User) userAttribute;
-
-        /*
-         * Controllo 3: l'utente deve avere
-         * il ruolo DEALER.
-         */
-        if (!"DEALER".equals(user.getRole())) {
-            response.sendError(
-                    HttpServletResponse.SC_FORBIDDEN,
-                    "Accesso consentito soltanto ai dealer"
-            );
-            return null;
-        }
-
-        return user;
-    }
 
     private String getTrimmedParameter(
             HttpServletRequest request,
