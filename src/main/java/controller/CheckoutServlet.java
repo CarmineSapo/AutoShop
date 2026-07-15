@@ -34,8 +34,18 @@ public class CheckoutServlet extends HttpServlet {
 
         Cart cart = (Cart) session.getAttribute("cart");
 
-        if (cart == null || cart.getItems().isEmpty()){
-            response.sendRedirect(request.getContextPath() + "/cart");
+        if (cart == null
+                || cart.getSelectedItems().isEmpty()) {
+
+            request.setAttribute(
+                    "checkoutError",
+                    "Seleziona almeno un veicolo da acquistare."
+            );
+
+            request.getRequestDispatcher(
+                    "/cart.jsp"
+            ).forward(request, response);
+
             return;
         }
 
@@ -44,7 +54,11 @@ public class CheckoutServlet extends HttpServlet {
         try{
             int orderId = orderDAO.createOrder(user, cart);
 
-            session.removeAttribute("cart");
+            cart.removeSelectedItems();
+
+            if (cart.getItems().isEmpty()) {
+                session.removeAttribute("cart");
+            }
 
             request.setAttribute("orderId", orderId);
 

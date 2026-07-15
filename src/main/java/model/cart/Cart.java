@@ -45,4 +45,69 @@ public class Cart {
     public boolean hasItems() {
         return items.isEmpty();
     }
+
+    /*
+    * aggiorna la selezione solo se il veicolo appartiene al carrello
+    */
+    public boolean setItemSelected( int vehicleId, boolean selected) {
+        for (CartItem item : items) {
+
+            if (item.getVehicle().getId() == vehicleId) {
+                item.setSelected(selected);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*
+    * restituisce gli elementi selezionati
+    */
+    public int getSelectedCount() {
+
+        int count = 0;
+
+        for (CartItem item : items) {
+
+            if (item.isSelected()) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+
+    public double getSelectedTotal() {
+
+        double total = 0;
+
+        for (CartItem item : items) {
+
+            if (item.isSelected()) {
+                total += item.getPrice();
+            }
+        }
+
+        return total;
+    }
+
+    public List<CartItem> getSelectedItems() {
+
+        List<CartItem> selectedItems = new ArrayList<>();
+
+        for (CartItem item : items) {
+
+            if (item.isSelected()) {
+                selectedItems.add(item);
+            }
+        }
+
+        return selectedItems;
+    }
+
+    public void removeSelectedItems() {
+        items.removeIf(CartItem::isSelected);
+    }
 }
