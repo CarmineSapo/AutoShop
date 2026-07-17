@@ -12,7 +12,8 @@ import java.io.IOException;
 @WebFilter( urlPatterns = {
         "/profile",
         "/my-orders",
-        "/checkout"
+        "/checkout",
+        "/upgrade-to-dealer"
 })
 public class AuthenticationFilter implements Filter {
     @Override
