@@ -394,5 +394,103 @@ public class VehicleDAO {
         }
     }
 
+    public List<Vehicle> getPublicVehiclesByDealer(
+            int dealerId
+    ) throws SQLException {
+
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        String sql = """
+            SELECT
+                id,
+                dealer_id,
+                brand,
+                model,
+                production_year,
+                km,
+                fuel_type,
+                transmission,
+                price,
+                description,
+                status,
+                is_active
+            FROM vehicles
+            WHERE dealer_id = ?
+              AND status = 'AVAILABLE'
+              AND is_active = TRUE
+            ORDER BY created_at DESC
+            """;
+
+        try (
+                Connection connection =
+                        DBConnection.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+            statement.setInt(1, dealerId);
+
+            try (ResultSet resultSet =
+                         statement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Vehicle vehicle = new Vehicle();
+
+                    vehicle.setId(
+                            resultSet.getInt("id")
+                    );
+
+                    vehicle.setDealerId(
+                            resultSet.getInt("dealer_id")
+                    );
+
+                    vehicle.setBrand(
+                            resultSet.getString("brand")
+                    );
+
+                    vehicle.setModel(
+                            resultSet.getString("model")
+                    );
+
+                    vehicle.setProductionYear(
+                            resultSet.getInt("production_year")
+                    );
+
+                    vehicle.setKm(
+                            resultSet.getInt("km")
+                    );
+
+                    vehicle.setFuelType(
+                            resultSet.getString("fuel_type")
+                    );
+
+                    vehicle.setTransmission(
+                            resultSet.getString("transmission")
+                    );
+
+                    vehicle.setPrice(
+                            resultSet.getDouble("price")
+                    );
+
+                    vehicle.setDescription(
+                            resultSet.getString("description")
+                    );
+
+                    vehicle.setStatus(
+                            resultSet.getString("status")
+                    );
+
+                    vehicle.setActive(
+                            resultSet.getBoolean("is_active")
+                    );
+
+                    vehicles.add(vehicle);
+                }
+            }
+        }
+
+        return vehicles;
+    }
 
 }

@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c"  uri="jakarta.tags.core" %>
 
 <!DOCTYPE html>
 <html>
@@ -32,6 +33,22 @@
   <p>Prezzo: € ${vehicle.price}</p>
   <p>Stato: ${vehicle.status}</p>
   <p>Descrizione: ${vehicle.description}</p>
+
+  <c:url var="dealerProfileUrl"
+         value="/dealer-profile">
+
+    <c:param name="id"
+             value="${vehicle.dealerId}"/>
+
+  </c:url>
+
+  <p>
+    <strong>Venditore:</strong>
+
+    <a href="${dealerProfileUrl}">
+      Visualizza profilo dealer
+    </a>
+  </p>
 
   <a  class="details-button"
       href="${pageContext.request.contextPath}/catalog">

@@ -470,3 +470,83 @@ h1{
     text-align: center;
     margin-top: 0;
 }
+
+.dealer-public-profile {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.dealer-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+
+    padding: 30px;
+
+    background-color: white;
+
+    border: 1px solid #ddd;
+    border-radius: 12px;
+}
+
+.dealer-profile-image img,
+.dealer-image-placeholder {
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+}
+
+.dealer-profile-image img {
+    object-fit: cover;
+}
+
+.dealer-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #ddd;
+
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.dealer-profile-information {
+    flex: 1;
+}
+
+.dealer-profile-information h1 {
+    margin-top: 0;
+}
+
+.dealer-description {
+    line-height: 1.5;
+}
+
+.dealer-posts-section {
+    margin-top: 40px;
+}
+
+.dealer-posts-section > h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.dealer-post-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(250px, 1fr));
+
+    gap: 20px;
+}
+
+@media (max-width: 700px) {
+
+    .dealer-profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}

@@ -7,6 +7,7 @@ import model.utils.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSet;
 
 public class DealerDAO {
 
@@ -112,6 +113,68 @@ public class DealerDAO {
 
             } finally {
                 connection.setAutoCommit(true);
+            }
+        }
+    }
+
+    public Dealer getDealerByUserId(int userId)
+            throws SQLException {
+
+        String sql = """
+            SELECT
+                user_id,
+                company_name,
+                vat_number,
+                description,
+                phone,
+                address
+            FROM dealers
+            WHERE user_id = ?
+            """;
+
+        try (
+                Connection connection =
+                        DBConnection.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+            statement.setInt(1, userId);
+
+            try (ResultSet resultSet =
+                         statement.executeQuery()) {
+
+                if (!resultSet.next()) {
+                    return null;
+                }
+
+                Dealer dealer = new Dealer();
+
+                dealer.setUserId(
+                        resultSet.getInt("user_id")
+                );
+
+                dealer.setCompanyName(
+                        resultSet.getString("company_name")
+                );
+
+                dealer.setVatNumber(
+                        resultSet.getString("vat_number")
+                );
+
+                dealer.setDescription(
+                        resultSet.getString("description")
+                );
+
+                dealer.setPhone(
+                        resultSet.getString("phone")
+                );
+
+                dealer.setAddress(
+                        resultSet.getString("address")
+                );
+
+                return dealer;
             }
         }
     }

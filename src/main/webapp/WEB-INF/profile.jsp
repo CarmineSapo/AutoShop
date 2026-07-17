@@ -56,6 +56,28 @@
     <c:out value="${sessionScope.user.role}"/>
   </p>
 
+
+  <c:if test="${sessionScope.user.role eq 'DEALER'}">
+
+    <c:url var="publicDealerProfileUrl"
+           value="/dealer-profile">
+
+      <c:param name="id"
+               value="${sessionScope.user.id}"/>
+
+    </c:url>
+
+    <p>
+      <a class="details-button"
+         href="${publicDealerProfileUrl}">
+
+        Visualizza il mio profilo pubblico
+
+      </a>
+    </p>
+
+  </c:if>
+
   <%--
       Il form per diventare dealer viene mostrato
       soltanto agli utenti con ruolo CUSTOMER.

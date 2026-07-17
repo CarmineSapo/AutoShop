@@ -8,7 +8,6 @@ public class Dealer {
     private String description;
     private String phone;
     private String address;
-    private String profileImagePath;
 
     public Dealer() {
     }
@@ -61,11 +60,4 @@ public class Dealer {
         this.address = address;
     }
 
-    public String getProfileImagePath() {
-        return profileImagePath;
-    }
-
-    public void setProfileImagePath(String profileImagePath) {
-        this.profileImagePath = profileImagePath;
-    }
 }
