@@ -550,3 +550,85 @@ h1{
         text-align: center;
     }
 }
+
+
+
+
+/*Regole dell'header */
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 16px 30px;
+
+    background-color: #0f172a;
+}
+
+.site-logo {
+    color: white;
+    text-decoration: none;
+
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.site-navigation {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.site-navigation a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.site-navigation a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 650px) {
+
+    .site-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .site-navigation {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+
+
+/*Regole del profilo*/
+
+.profile-account-actions,
+.profile-dealer-section {
+    margin-top: 30px;
+    padding-top: 20px;
+
+    border-top: 1px solid #ddd;
+}
+
+.profile-account-actions h2,
+.profile-dealer-section h2 {
+    margin-top: 0;
+}
+
+.profile-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.secondary-profile-link {
+    color: #333;
+    text-decoration: underline;
+}

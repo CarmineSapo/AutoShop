@@ -1,58 +1,59 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: gemel
-  Date: 20/06/2026
-  Time: 18:08
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"
+         pageEncoding="UTF-8"
+         language="java" %>
 
+<%@ taglib prefix="c"
+           uri="jakarta.tags.core" %>
 
 <header class="site-header">
 
-    <div class="header-left">
-        <div class="logo">AutoShop</div>
-    </div>
+    <a class="site-logo"
+       href="${pageContext.request.contextPath}/">
+        AutoShop
+    </a>
 
-    <nav class="header-center">
-        <a href="${pageContext.request.contextPath}/">Home</a>
-        <a href="${pageContext.request.contextPath}/catalog">Catalogo</a>
-        <a href="${pageContext.request.contextPath}/cart">Carrello</a>
-    </nav>
+    <nav class="site-navigation"
+         aria-label="Navigazione principale">
 
-    <div class="header-right">
+        <a href="${pageContext.request.contextPath}/">
+            Home
+        </a>
+
+        <a href="${pageContext.request.contextPath}/catalog">
+            Filtri
+        </a>
+
+        <a href="${pageContext.request.contextPath}/cart">
+            Carrello
+        </a>
+
         <c:choose>
+
+            <%--
+                visitatore non autenticato viene portato
+                alla pagina di login
+            --%>
             <c:when test="${empty sessionScope.user}">
-                <a href="${pageContext.request.contextPath}/login.jsp">Login</a>
-                <a href="${pageContext.request.contextPath}/register.jsp">Registrati</a>
+
+                <a href="${pageContext.request.contextPath}/login.jsp">
+                    Profilo
+                </a>
+
             </c:when>
 
+            <%--
+                 utente autenticato apre il proprio profilo
+            --%>
             <c:otherwise>
-                <span class="user-greeting">Ciao, ${sessionScope.user.username}</span>
 
-                <a href="${pageContext.request.contextPath}/profile">Profilo</a>
-
-                <a href="${pageContext.request.contextPath}/my-orders">I miei ordini</a>
-
-                <c:if test="${sessionScope.user.role eq 'DEALER'}">
-
-                    <a href="${pageContext.request.contextPath}/dealer/dashboard">
-                        Area dealer
-                    </a>
-                </c:if>
-
-                <c:if test="${sessionScope.user.role eq 'ADMIN'}">
-
-                    <a href="${pageContext.request.contextPath}/dealer/dashboard">
-                        Area dealer
-                    </a>
-                </c:if>
-
-                <a href="${pageContext.request.contextPath}/logout">Logout</a>
+                <a href="${pageContext.request.contextPath}/profile">
+                    Profilo
+                </a>
 
             </c:otherwise>
+
         </c:choose>
-    </div>
+
+    </nav>
 
 </header>
