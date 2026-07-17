@@ -8,18 +8,27 @@
 <header class="site-header">
 
     <a class="site-logo"
-       href="${pageContext.request.contextPath}/">
+       href="${pageContext.request.contextPath}/catalog">
         AutoShop
     </a>
 
     <nav class="site-navigation"
          aria-label="Navigazione principale">
 
-        <a href="${pageContext.request.contextPath}/">
+        <%--
+            Home mostra direttamente la griglia
+            dei veicoli disponibili.
+        --%>
+        <a href="${pageContext.request.contextPath}/catalog">
             Home
         </a>
 
-        <a href="${pageContext.request.contextPath}/catalog">
+        <%--
+            Usa la stessa Servlet del catalogo,
+            ma segnala alla JSP che deve mostrare
+            anche il pannello dei filtri.
+        --%>
+        <a href="${pageContext.request.contextPath}/catalog?showFilters=true">
             Filtri
         </a>
 
@@ -29,10 +38,6 @@
 
         <c:choose>
 
-            <%--
-                visitatore non autenticato viene portato
-                alla pagina di login
-            --%>
             <c:when test="${empty sessionScope.user}">
 
                 <a href="${pageContext.request.contextPath}/login.jsp">
@@ -41,9 +46,6 @@
 
             </c:when>
 
-            <%--
-                 utente autenticato apre il proprio profilo
-            --%>
             <c:otherwise>
 
                 <a href="${pageContext.request.contextPath}/profile">
