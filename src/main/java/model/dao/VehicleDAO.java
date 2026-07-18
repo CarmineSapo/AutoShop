@@ -401,25 +401,25 @@ public class VehicleDAO {
         List<Vehicle> vehicles = new ArrayList<>();
 
         String sql = """
-            SELECT
-                id,
-                dealer_id,
-                brand,
-                model,
-                production_year,
-                km,
-                fuel_type,
-                transmission,
-                price,
-                description,
-                status,
-                is_active
-            FROM vehicles
-            WHERE dealer_id = ?
-              AND status = 'AVAILABLE'
-              AND is_active = TRUE
-            ORDER BY created_at DESC
-            """;
+                SELECT
+                    id,
+                    dealer_id,
+                    brand,
+                    model,
+                    production_year,
+                    km,
+                    fuel_type,
+                    transmission,
+                    price,
+                    description,
+                    status,
+                    is_active
+                FROM vehicles
+                WHERE dealer_id = ?
+                  AND status = 'AVAILABLE'
+                  AND is_active = TRUE
+                ORDER BY created_at DESC
+                """;
 
         try (
                 Connection connection =
@@ -432,6 +432,107 @@ public class VehicleDAO {
 
             try (ResultSet resultSet =
                          statement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Vehicle vehicle = new Vehicle();
+
+                    vehicle.setId(
+                            resultSet.getInt("id")
+                    );
+
+                    vehicle.setDealerId(
+                            resultSet.getInt("dealer_id")
+                    );
+
+                    vehicle.setBrand(
+                            resultSet.getString("brand")
+                    );
+
+                    vehicle.setModel(
+                            resultSet.getString("model")
+                    );
+
+                    vehicle.setProductionYear(
+                            resultSet.getInt("production_year")
+                    );
+
+                    vehicle.setKm(
+                            resultSet.getInt("km")
+                    );
+
+                    vehicle.setFuelType(
+                            resultSet.getString("fuel_type")
+                    );
+
+                    vehicle.setTransmission(
+                            resultSet.getString("transmission")
+                    );
+
+                    vehicle.setPrice(
+                            resultSet.getDouble("price")
+                    );
+
+                    vehicle.setDescription(
+                            resultSet.getString("description")
+                    );
+
+                    vehicle.setStatus(
+                            resultSet.getString("status")
+                    );
+
+                    vehicle.setActive(
+                            resultSet.getBoolean("is_active")
+                    );
+
+                    vehicles.add(vehicle);
+                }
+            }
+        }
+
+        return vehicles;
+    }
+
+
+    public List<Vehicle> getFilteredVehicles(
+            String brand,
+            double maxPrice,
+            String fuelType,
+            String transmission
+    ) throws SQLException {
+
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        String sql = """
+                SELECT *
+                FROM vehicles
+                WHERE status = 'AVAILABLE'
+                  AND is_active = TRUE
+                  AND (? = '' OR LOWER(brand) LIKE LOWER(?))
+                  AND (? <= 0 OR price <= ?)
+                  AND (? = '' OR fuel_type = ?)
+                  AND (? = '' OR transmission = ?)
+                ORDER BY created_at DESC
+                """;
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, brand);
+            statement.setString(2, "%" + brand + "%");
+
+            statement.setDouble(3, maxPrice);
+            statement.setDouble(4, maxPrice);
+
+            statement.setString(5, fuelType);
+            statement.setString(6, fuelType);
+
+            statement.setString(7, transmission);
+            statement.setString(8, transmission);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
 
                 while (resultSet.next()) {
 

@@ -13,31 +13,111 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-@WebServlet("/catalog")  //Significa che questa Servlet risponde all’URL:
+@WebServlet("/catalog")
+public class CatalogServlet extends HttpServlet{
 
-//                          http://localhost:8080/AutoShop/catalog
-
-public class CatalogServlet  extends HttpServlet {
-
-    private final VehicleDAO vehicleDao = new VehicleDAO();
+    private final VehicleDAO vehicleDAO =
+            new VehicleDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException{
+
+        String brand = getParameter(request, "brand");
+
+        String maxPriceParameter = getParameter(request, "maxPrice");
+
+        String fuelType = getParameter(request, "fuelType");
+
+        String transmission = getParameter(request, "transmission");
+
+        double maxPrice = 0; // Il valore 0 di maxPrice significa che il filtro non è satto applicato
+
+        if(!maxPriceParameter.isEmpty()) {
+            try {
+                maxPrice = Double.parseDouble(maxPriceParameter);
+
+                if (maxPrice <= 0) {
+                    request.setAttribute("filterError",
+                            "Il prezzo massimo deve essere maggiore di zero."
+                    );
+
+                    maxPrice = 0;
+                }
+
+            } catch (NumberFormatException e){
+                request.setAttribute("filterError",
+                        "Il prezzo massimo non è valido"
+                );
+
+                maxPrice = 0;
+            }
+        }
+
+        // controllo lato server
+
+        if (!isValidFuelType(fuelType)){
+            request.setAttribute("filterError",
+                    "Il carburante non è valido"
+            );
+            fuelType = "";
+        }
+
+        if (!isValidTransmission(transmission)) {
+            request.setAttribute("filterError",
+                    "Tipo di cambio non valido"
+            );
+
+            transmission = "";
+        }
+
 
         try {
-            List<Vehicle> vehicles = vehicleDao.getAllVehicles();
+            List<Vehicle> vehicles =
+                    vehicleDAO.getFilteredVehicles(
+                            brand,
+                            maxPrice,
+                            fuelType,
+                            transmission
+                    );
 
-            request.setAttribute(
-                    "vehicles",
-                    vehicles);  //Qui salviamo la lista dentro la richiesta HTTP. La JSP potrà usare il nome: vehicles
+            request.setAttribute("vehicles", vehicles);
 
             request.getRequestDispatcher("/catalog.jsp")
-                    .forward(request, response);  //Qui passiamo il controllo alla pagina JSP. Servlet → catalog.jsp La servlet non stampa HTML direttamente.
-
+                    .forward(request, response);
 
         } catch (SQLException e) {
-            throw new ServletException("Errore durante il caricamento del catalogo: ", e );
+            throw new RuntimeException("Errore durante il caricamento del catalogo",
+                    e);
         }
+    }
+
+
+
+/// ///   UTILS ///////////////////////////////////////////////////////////////////////////
+    private String getParameter(HttpServletRequest request, String name){
+        String value = request.getParameter(name);
+
+        if (value == null){
+            return "";
+        }
+        return value.trim();
+    }
+
+
+    private boolean isValidFuelType(String fuelType){
+        return fuelType.isEmpty()
+                || "Benzina".equals(fuelType)
+                || "Diesel".equals(fuelType)
+                || "Elettrico".equals(fuelType)
+                || "Ibrido".equals(fuelType)
+                || "GPL".equals(fuelType);
+    }
+
+
+    private boolean isValidTransmission(String transmission){
+        return transmission.isEmpty()
+                ||transmission.equals("Manuale")
+                ||transmission.equals("Automatico");
     }
 }

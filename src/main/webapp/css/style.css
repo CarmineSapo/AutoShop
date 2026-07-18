@@ -632,3 +632,43 @@ h1{
     color: #333;
     text-decoration: underline;
 }
+
+
+
+/*Regole filtri catalogo*/
+
+.catalog-filters {
+    max-width: 900px;
+    margin: 20px auto 30px;
+    padding: 20px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.filter-buttons{
+    grid-column: 1 / -1;
+
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+@media (max-width: 800px) {
+
+    .catalog-filters {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .catalog-filters {
+        grid-template-columns: 1fr;
+    }
+}

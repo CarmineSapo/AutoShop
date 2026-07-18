@@ -28,13 +28,132 @@
 
         <c:when test="${param.showFilters eq 'true'}">
 
-            <h1>Cerca un veicolo</h1>
+           <h1>Cerca un veicolo</h1>
 
-            <div class="catalog-filters">
-                <p>
-                    Qui inseriremo i filtri.
+            <c:if test="${not empty filterError}">
+                <p class="form-errors">
+                    ${filterError}
                 </p>
-            </div>
+            </c:if>
+
+            <form action="${pageContext.request.contextPath}/catalog"
+                  method="get"
+                  class="catalog-filters">
+
+                <input type="hidden"
+                       name="showFilters"
+                       value="true">
+
+                <div class="form-group">
+
+                    <label for="brand">Marca</label>
+                    <input type="text"
+                           id="brand"
+                           name="brand"
+                           maxlength="50"
+                           value="${param.brand}"
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="maxPrice">Prezzo Massimo</label>
+                    <input type="number"
+                           id="maxPrice"
+                           name="maxPrice"
+                           min="1"
+                           step="0.01"
+                           value="${param.maxPrice}">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="fuelType">Carburante</label>
+                    <select id="fuelType"
+                            name="fuelType">
+
+                        <option value="">
+                            Tutti
+                        </option>
+
+                        <option value="Benzina"
+                            ${param.fuelType eq 'Benzina'
+                                    ? 'selected' : ''}>
+                            Benzina
+                        </option>
+
+                        <option value="Diesel"
+                            ${param.fuelType eq 'Diesel'
+                                    ? 'selected' : ''}>
+                            Diesel
+                        </option>
+
+                        <option value="Elettrico"
+                            ${param.fuelType eq 'Elettrico'
+                                    ? 'selected' : ''}>
+                            Elettrico
+                        </option>
+
+                        <option value="Ibrido"
+                            ${param.fuelType eq 'Ibrido'
+                                    ? 'selected' : ''}>
+                            Ibrido
+                        </option>
+
+                        <option value="GPL"
+                            ${param.fuelType eq 'GPL'
+                                    ? 'selected' : ''}>
+                            GPL
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="transmission">Cambio</label>
+
+                    <select id="transmission"
+                            name="transmission">
+
+                        <option value="">
+                            Tutti
+                        </option>
+
+                        <option value="Manuale"
+                            ${param.transmission eq 'Manuale'
+                                    ? 'selected' : ''}>
+                            Manuale
+                        </option>
+
+                        <option value="Automatico"
+                            ${param.transmission eq 'Automatico'
+                                    ? 'selected' : ''}>
+                            Automatico
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="filter-buttons">
+
+                    <button type="submit"
+                            class="details-button">
+                        Applica filtri
+                    </button>
+
+                    <a class="details-button"
+                       href="${pageContext.request.contextPath}/catalog?showFilters=true">
+                        Rimuovi filtri
+                    </a>
+
+                </div>
+
+            </form>
 
         </c:when>
 
