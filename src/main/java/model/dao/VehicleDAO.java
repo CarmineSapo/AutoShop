@@ -9,42 +9,6 @@ import java.util.List;
 
 public class VehicleDAO {
 
-    public List<Vehicle> getAllVehicles() throws SQLException {
-
-        List<Vehicle> vehicles = new ArrayList<>();
-
-        String sql = "SELECT * FROM vehicles WHERE status = 'AVAILABLE' AND is_active = TRUE";
-
-        try (
-                Connection connection = DBConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery();
-        ) {
-            while (resultSet.next()) {
-
-                Vehicle vehicle = new Vehicle();
-
-                vehicle.setId(resultSet.getInt("id"));
-                vehicle.setDealerId(resultSet.getInt("dealer_id"));
-                vehicle.setBrand(resultSet.getString("brand"));
-                vehicle.setModel(resultSet.getString("model"));
-                vehicle.setProductionYear(resultSet.getInt("production_year"));
-                vehicle.setKm(resultSet.getInt("km"));
-                vehicle.setFuelType(resultSet.getString("fuel_type"));
-                vehicle.setTransmission(resultSet.getString("transmission"));
-                vehicle.setPrice(resultSet.getDouble("price"));
-                vehicle.setDescription(resultSet.getString("description"));
-                vehicle.setStatus(resultSet.getString("status"));
-                vehicle.setActive(resultSet.getBoolean("is_active"));
-
-                vehicles.add(vehicle);
-            }
-        }
-
-        return vehicles;
-
-    }
-
     public Vehicle getVehicleById(int id) throws SQLException {
 
         String sql = "SELECT * FROM vehicles WHERE id = ? AND is_active = TRUE";
@@ -58,22 +22,7 @@ public class VehicleDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
-
-                    Vehicle vehicle = new Vehicle();
-
-                    vehicle.setId(resultSet.getInt("id"));
-                    vehicle.setDealerId(resultSet.getInt("dealer_id"));
-                    vehicle.setBrand(resultSet.getString("brand"));
-                    vehicle.setModel(resultSet.getString("model"));
-                    vehicle.setProductionYear(resultSet.getInt("production_year"));
-                    vehicle.setKm(resultSet.getInt("km"));
-                    vehicle.setFuelType(resultSet.getString("fuel_type"));
-                    vehicle.setTransmission(resultSet.getString("transmission"));
-                    vehicle.setPrice(resultSet.getDouble("price"));
-                    vehicle.setDescription(resultSet.getString("description"));
-                    vehicle.setStatus(resultSet.getString("status"));
-
-                    return vehicle;
+                    return mapVehicle(resultSet);
                 }
             }
         }
@@ -106,39 +55,9 @@ public class VehicleDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 while (resultSet.next()) {
-
-                    Vehicle vehicle = new Vehicle();
-
-                    vehicle.setId(resultSet.getInt("id"));
-                    vehicle.setDealerId(resultSet.getInt("dealer_id"));
-                    vehicle.setBrand(resultSet.getString("brand"));
-                    vehicle.setModel(resultSet.getString("model"));
-
-                    vehicle.setProductionYear(
-                            resultSet.getInt("production_year")
+                    vehicles.add(
+                            mapVehicle(resultSet)
                     );
-
-                    vehicle.setKm(resultSet.getInt("km"));
-
-                    vehicle.setFuelType(
-                            resultSet.getString("fuel_type")
-                    );
-
-                    vehicle.setTransmission(
-                            resultSet.getString("transmission")
-                    );
-
-                    vehicle.setPrice(resultSet.getDouble("price"));
-
-                    vehicle.setDescription(
-                            resultSet.getString("description")
-                    );
-
-                    vehicle.setStatus(resultSet.getString("status"));
-
-                    vehicle.setActive(resultSet.getBoolean("is_active"));
-
-                    vehicles.add(vehicle);
                 }
             }
         }
@@ -238,48 +157,10 @@ public class VehicleDAO {
 
             try (ResultSet resultSet = statement.executeQuery()) {
 
-                if (!resultSet.next()) {
-                    return null;
+                if (resultSet.next()) {
+                    return mapVehicle(resultSet);
                 }
-
-                Vehicle vehicle = new Vehicle();
-
-                vehicle.setId(resultSet.getInt("id"));
-                vehicle.setDealerId(
-                        resultSet.getInt("dealer_id")
-                );
-                vehicle.setBrand(
-                        resultSet.getString("brand")
-                );
-                vehicle.setModel(
-                        resultSet.getString("model")
-                );
-                vehicle.setProductionYear(
-                        resultSet.getInt("production_year")
-                );
-                vehicle.setKm(
-                        resultSet.getInt("km")
-                );
-                vehicle.setFuelType(
-                        resultSet.getString("fuel_type")
-                );
-                vehicle.setTransmission(
-                        resultSet.getString("transmission")
-                );
-                vehicle.setPrice(
-                        resultSet.getDouble("price")
-                );
-                vehicle.setDescription(
-                        resultSet.getString("description")
-                );
-                vehicle.setStatus(
-                        resultSet.getString("status")
-                );
-                vehicle.setActive(
-                        resultSet.getBoolean("is_active")
-                );
-
-                return vehicle;
+                return null;
             }
         }
     }
@@ -434,58 +315,9 @@ public class VehicleDAO {
                          statement.executeQuery()) {
 
                 while (resultSet.next()) {
-
-                    Vehicle vehicle = new Vehicle();
-
-                    vehicle.setId(
-                            resultSet.getInt("id")
+                    vehicles.add(
+                            mapVehicle(resultSet)
                     );
-
-                    vehicle.setDealerId(
-                            resultSet.getInt("dealer_id")
-                    );
-
-                    vehicle.setBrand(
-                            resultSet.getString("brand")
-                    );
-
-                    vehicle.setModel(
-                            resultSet.getString("model")
-                    );
-
-                    vehicle.setProductionYear(
-                            resultSet.getInt("production_year")
-                    );
-
-                    vehicle.setKm(
-                            resultSet.getInt("km")
-                    );
-
-                    vehicle.setFuelType(
-                            resultSet.getString("fuel_type")
-                    );
-
-                    vehicle.setTransmission(
-                            resultSet.getString("transmission")
-                    );
-
-                    vehicle.setPrice(
-                            resultSet.getDouble("price")
-                    );
-
-                    vehicle.setDescription(
-                            resultSet.getString("description")
-                    );
-
-                    vehicle.setStatus(
-                            resultSet.getString("status")
-                    );
-
-                    vehicle.setActive(
-                            resultSet.getBoolean("is_active")
-                    );
-
-                    vehicles.add(vehicle);
                 }
             }
         }
@@ -535,63 +367,72 @@ public class VehicleDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 while (resultSet.next()) {
-
-                    Vehicle vehicle = new Vehicle();
-
-                    vehicle.setId(
-                            resultSet.getInt("id")
+                    vehicles.add(
+                            mapVehicle(resultSet)
                     );
-
-                    vehicle.setDealerId(
-                            resultSet.getInt("dealer_id")
-                    );
-
-                    vehicle.setBrand(
-                            resultSet.getString("brand")
-                    );
-
-                    vehicle.setModel(
-                            resultSet.getString("model")
-                    );
-
-                    vehicle.setProductionYear(
-                            resultSet.getInt("production_year")
-                    );
-
-                    vehicle.setKm(
-                            resultSet.getInt("km")
-                    );
-
-                    vehicle.setFuelType(
-                            resultSet.getString("fuel_type")
-                    );
-
-                    vehicle.setTransmission(
-                            resultSet.getString("transmission")
-                    );
-
-                    vehicle.setPrice(
-                            resultSet.getDouble("price")
-                    );
-
-                    vehicle.setDescription(
-                            resultSet.getString("description")
-                    );
-
-                    vehicle.setStatus(
-                            resultSet.getString("status")
-                    );
-
-                    vehicle.setActive(
-                            resultSet.getBoolean("is_active")
-                    );
-
-                    vehicles.add(vehicle);
                 }
             }
         }
 
         return vehicles;
+    }
+
+
+
+    private Vehicle mapVehicle(ResultSet resultSet)
+            throws SQLException {
+
+        Vehicle vehicle = new Vehicle();
+
+        vehicle.setId(
+                resultSet.getInt("id")
+        );
+
+        vehicle.setDealerId(
+                resultSet.getInt("dealer_id")
+        );
+
+        vehicle.setBrand(
+                resultSet.getString("brand")
+        );
+
+        vehicle.setModel(
+                resultSet.getString("model")
+        );
+
+        vehicle.setProductionYear(
+                resultSet.getInt("production_year")
+        );
+
+        vehicle.setKm(
+                resultSet.getInt("km")
+        );
+
+        vehicle.setFuelType(
+                resultSet.getString("fuel_type")
+        );
+
+        vehicle.setTransmission(
+                resultSet.getString("transmission")
+        );
+
+        vehicle.setPrice(
+                resultSet.getDouble("price")
+        );
+
+        vehicle.setDescription(
+                resultSet.getString("description")
+        );
+
+        vehicle.setStatus(
+                resultSet.getString("status")
+        );
+
+        vehicle.setActive(
+                resultSet.getBoolean("is_active")
+        );
+
+        return vehicle;
     }
 
 }
