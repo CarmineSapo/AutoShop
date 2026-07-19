@@ -9,6 +9,7 @@ import model.bean.Dealer;
 import model.bean.Vehicle;
 import model.dao.DealerDAO;
 import model.dao.VehicleDAO;
+import model.dao.VehicleImageDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -23,6 +24,9 @@ public class DealerProfileServlet
 
     private final VehicleDAO vehicleDAO =
             new VehicleDAO();
+
+    private final VehicleImageDAO vehicleImageDAO =
+            new VehicleImageDAO();
 
     @Override
     protected void doGet(
@@ -75,6 +79,14 @@ public class DealerProfileServlet
                     vehicleDAO.getPublicVehiclesByDealer(
                             dealerId
                     );
+
+            for (Vehicle vehicle : vehicles){
+                vehicle.setImagePaths(
+                        vehicleImageDAO.getImagesByVehicleId(
+                                vehicle.getId()
+                        )
+                );
+            }
 
             request.setAttribute(
                     "dealer",
