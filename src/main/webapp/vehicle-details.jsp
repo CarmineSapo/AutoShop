@@ -24,6 +24,34 @@
 
 <div class="vehicle-details-card">
 
+  <c:choose>
+
+    <c:when test="${not empty vehicle.imagePaths}">
+
+      <div class="vehicle-gallery">
+
+        <c:forEach var="imagePath"
+                   items="${vehicle.imagePaths}">
+
+          <img src="${pageContext.request.contextPath}/${imagePath}"
+               alt="${vehicle.brand} ${vehicle.model}">
+
+        </c:forEach>
+
+      </div>
+
+    </c:when>
+
+    <c:otherwise>
+
+      <div class="vehicle-image-placeholder">
+        Nessuna immagine disponibile
+      </div>
+
+    </c:otherwise>
+
+  </c:choose>
+
   <h1>${vehicle.brand} ${vehicle.model}</h1>
 
   <p>Anno: ${vehicle.productionYear}</p>

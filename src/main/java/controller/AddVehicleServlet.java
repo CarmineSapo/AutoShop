@@ -3,13 +3,16 @@ package controller;
 
 import filter.DealerAuthorizationFilter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import model.bean.User;
 import model.bean.Vehicle;
 import model.dao.VehicleDAO;
+import model.dao.VehicleImageDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -17,11 +20,21 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
 
 @WebServlet("/dealer/add-vehicle")
+@MultipartConfig(
+        maxFileSize = 5 * 1024 * 1024,
+        maxRequestSize = 15 * 1024 * 1024
+)
 public class AddVehicleServlet extends HttpServlet{
 
     private final VehicleDAO vehicleDAO = new VehicleDAO();
+
+    private final VehicleImageDAO vehicleImageDAO = new VehicleImageDAO();
 
     private static final Set<String> ALLOWED_FUEL_TYPES =
             Set.of(
@@ -67,6 +80,41 @@ public class AddVehicleServlet extends HttpServlet{
         User dealer = (User) request.getAttribute(DealerAuthorizationFilter.DEALER_ATTRIBUTE);
 
         List<String> errors = new ArrayList<>();
+
+        List<Part> imageParts = new ArrayList<>();
+
+        for (Part part : request.getParts()) {
+
+            if ("images".equals(part.getName())
+                    && part.getSize() > 0) {
+
+                imageParts.add(part);
+            }
+        }
+
+        if (imageParts.size() > 3) {
+            errors.add(
+                    "Puoi caricare un massimo di 3 immagini."
+            );
+        }
+
+        for (Part imagePart : imageParts) {
+
+            String contentType =
+                    imagePart.getContentType();
+
+            boolean validType =
+                    "image/jpeg".equals(contentType)
+                            || "image/png".equals(contentType)
+                            || "image/webp".equals(contentType);
+
+            if (!validType) {
+                errors.add(
+                        "Sono consentite soltanto immagini JPG, PNG o WEBP."
+                );
+                break;
+            }
+        }
 
         String brand = getTrimmedParameter(request, "brand");
         String model = getTrimmedParameter(request, "model");
@@ -188,6 +236,11 @@ public class AddVehicleServlet extends HttpServlet{
             int generatedVehicleId =
                     vehicleDAO.insertVehicle(vehicle);
 
+            saveVehicleImages(
+                    imageParts,
+                    generatedVehicleId
+            );
+
             vehicle.setId(generatedVehicleId);
 
             response.sendRedirect(                     //Non facciamo forward. Evita che aggiornando la pagina dopo
@@ -238,7 +291,71 @@ public class AddVehicleServlet extends HttpServlet{
     }
 
 
+    private void saveVehicleImages(
+            List<Part> imageParts,
+            int vehicleId
+    ) throws IOException, SQLException {
 
+        String uploadDirectory =
+                getServletContext().getRealPath(
+                        "/uploads/vehicles"
+                );
+
+        Path uploadPath =
+                Path.of(uploadDirectory);
+
+        Files.createDirectories(uploadPath);
+
+        int sortOrder = 1;
+
+        for (Part imagePart : imageParts) {
+
+            String extension =
+                    getImageExtension(
+                            imagePart.getContentType()
+                    );
+
+            String fileName =
+                    UUID.randomUUID() + extension;
+
+            Path destination =
+                    uploadPath.resolve(fileName);
+
+            try (InputStream inputStream =
+                         imagePart.getInputStream()) {
+
+                Files.copy(
+                        inputStream,
+                        destination
+                );
+            }
+
+            String databasePath =
+                    "uploads/vehicles/" + fileName;
+
+            vehicleImageDAO.insertImage(
+                    vehicleId,
+                    databasePath,
+                    sortOrder
+            );
+
+            sortOrder++;
+        }
+    }
+
+    private String getImageExtension(
+            String contentType
+    ) {
+        if ("image/png".equals(contentType)) {
+            return ".png";
+        }
+
+        if ("image/webp".equals(contentType)) {
+            return ".webp";
+        }
+
+        return ".jpg";
+    }
 
 
 

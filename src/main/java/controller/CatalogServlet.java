@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.bean.Vehicle;
 import model.dao.VehicleDAO;
+import model.dao.VehicleImageDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -18,6 +19,9 @@ public class CatalogServlet extends HttpServlet{
 
     private final VehicleDAO vehicleDAO =
             new VehicleDAO();
+
+    private final VehicleImageDAO vehicleImageDAO =
+            new VehicleImageDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -80,6 +84,15 @@ public class CatalogServlet extends HttpServlet{
                             fuelType,
                             transmission
                     );
+
+            for (Vehicle vehicle : vehicles) {
+
+                vehicle.setImagePaths(
+                        vehicleImageDAO.getImagesByVehicleId(
+                                vehicle.getId()
+                        )
+                );
+            }
 
             request.setAttribute("vehicles", vehicles);
 

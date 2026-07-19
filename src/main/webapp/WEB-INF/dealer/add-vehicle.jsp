@@ -55,6 +55,7 @@
 
     <form action="${pageContext.request.contextPath}/dealer/add-vehicle"
           method="post"
+          enctype="multipart/form-data"
           class="vehicle-form">
 
         <div class="form-group">
@@ -213,6 +214,24 @@
                       name="description"
                       rows="6"
                       maxlength="2000"><c:out value="${param.description}"/></textarea>
+        </div>
+
+        <div class="form-group">
+
+            <label for="images">
+                Immagini del veicolo
+            </label>
+
+            <input type="file"
+                   id="images"
+                   name="images"
+                   accept="image/jpeg,image/png,image/webp"
+                   multiple>
+
+            <small>
+                Puoi caricare un massimo di 3 immagini.
+            </small>
+
         </div>
 
         <div class="vehicle-form-actions">

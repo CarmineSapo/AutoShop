@@ -182,6 +182,26 @@
 
                     <div class="vehicle-card">
 
+                        <c:choose>
+
+                            <c:when test="${not empty vehicle.imagePaths}">
+
+                                <img class="vehicle-card-image"
+                                     src="${pageContext.request.contextPath}/${vehicle.imagePaths[0]}"
+                                     alt="${vehicle.brand} ${vehicle.model}">
+
+                            </c:when>
+
+                            <c:otherwise>
+
+                                <div class="vehicle-image-placeholder">
+                                    Nessuna immagine
+                                </div>
+
+                            </c:otherwise>
+
+                        </c:choose>
+
                         <h2>
                                 ${vehicle.brand} ${vehicle.model}
                         </h2>

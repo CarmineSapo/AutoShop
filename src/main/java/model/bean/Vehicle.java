@@ -1,5 +1,8 @@
 package model.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Vehicle {
 
     private int id;
@@ -14,6 +17,7 @@ public class Vehicle {
     private String description;
     private String status;
     private boolean active;
+    private List<String> imagePaths = new ArrayList<>();
 
     public Vehicle() {}
 
@@ -122,5 +126,13 @@ public class Vehicle {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public List<String> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void setImagePaths(List<String> imagePaths) {
+        this.imagePaths = imagePaths;
     }
 }
