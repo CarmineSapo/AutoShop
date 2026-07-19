@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: gemel
-  Date: 19/06/2026
-  Time: 23:09
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c"  uri="jakarta.tags.core" %>
 
@@ -12,6 +5,8 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
     <title>Dettaglio Veicolo</title>
 
   <link rel="stylesheet"
@@ -60,7 +55,7 @@
   <p>Cambio: ${vehicle.transmission}</p>
   <p>Prezzo: € ${vehicle.price}</p>
   <p>Stato: ${vehicle.status}</p>
-  <p>Descrizione: ${vehicle.description}</p>
+  <p class="vehicle-description">Descrizione: ${vehicle.description}</p>
 
   <c:url var="dealerProfileUrl"
          value="/dealer-profile">
@@ -83,10 +78,31 @@
     Torna al catalogo
   </a>
 
-  <a class="details-button"
-     href="${pageContext.request.contextPath}/add-to-cart?id=${vehicle.id}">
-    Aggiungi al carrello
-  </a>
+  <c:choose>
+
+    <%--
+        se l'utente autenticato è il proprietario
+        del veicolo, non può acquistarlo
+    --%>
+    <c:when test="${not empty sessionScope.user
+                  and sessionScope.user.id eq vehicle.dealerId}">
+
+      <p class="owner-vehicle-message">
+        Questo veicolo appartiene alla tua concessionaria.
+      </p>
+
+    </c:when>
+
+    <c:otherwise>
+
+      <a class="details-button"
+         href="${pageContext.request.contextPath}/add-to-cart?id=${vehicle.id}">
+        Aggiungi al carrello
+      </a>
+
+    </c:otherwise>
+
+  </c:choose>
 
 </div>
 

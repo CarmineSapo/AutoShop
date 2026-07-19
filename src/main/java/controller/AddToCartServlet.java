@@ -3,6 +3,7 @@ package controller;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import model.bean.User;
 import model.bean.Vehicle;
 import model.cart.Cart;
 import model.dao.VehicleDAO;
@@ -37,6 +38,17 @@ public class AddToCartServlet extends HttpServlet {
                 return;
             }
 
+            User user = (User) request.getSession()
+                    .getAttribute("user");
+
+            if (isVehicleOwner(user, vehicle)) {
+
+                response.sendError(
+                        HttpServletResponse.SC_FORBIDDEN,
+                        "Non puoi aggiungere al carrello un tuo veicolo."
+                );
+            }
+
             HttpSession session = request.getSession();
 
             Cart cart = (Cart) session.getAttribute("cart");
@@ -57,4 +69,28 @@ public class AddToCartServlet extends HttpServlet {
             throw new ServletException("Errore durante l'aggiunta al carrello", e);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+     *controlla se l'utente autenticato è il dealer
+     *proprietario del veicolo
+     */
+    private boolean isVehicleOwner(
+            User user,
+            Vehicle vehicle
+    ) {
+        return user != null && user.getId() == vehicle.getDealerId();
+    }
+
 }

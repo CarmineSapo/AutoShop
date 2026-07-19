@@ -113,7 +113,8 @@
                     name="fuelType"
                     required>
 
-                <option value="">
+                <option value=""
+                        disabled>
                     Seleziona
                 </option>
 
@@ -161,7 +162,8 @@
                     name="transmission"
                     required>
 
-                <option value="">
+                <option value=""
+                        disabled>
                     Seleziona
                 </option>
 

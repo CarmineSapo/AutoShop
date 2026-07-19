@@ -34,7 +34,7 @@
 
 <jsp:include page="/jsp/header.jsp"/>
 
-<main class="form-card">
+<main class="form-card profile-container">
 
   <h1>Profilo utente</h1>
 

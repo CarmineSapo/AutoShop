@@ -306,6 +306,15 @@ a {
     overflow-wrap: anywhere;
 }
 
+.owner-vehicle-message {
+    padding: 12px;
+
+    background-color: #fff3cd;
+
+    border: 1px solid #e0c36c;
+    border-radius: 6px;
+}
+
 
 /* ==================================================
    FORM GENERICI: LOGIN, REGISTRAZIONE E PROFILO
@@ -401,6 +410,10 @@ a {
     gap: 12px;
 }
 
+.form-card.profile-container
+{
+    max-width: 620px;
+}
 
 /* ==================================================
    UPGRADE DA CUSTOMER A DEALER
