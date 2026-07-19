@@ -149,7 +149,7 @@ public class UpgradeToDealerServlet extends HttpServlet {
 
             response.sendRedirect(
                     request.getContextPath()
-                            + "/dealer/dashboard"
+                            + "/profile"
             );
 
         } catch (SQLException e) {

@@ -44,6 +44,16 @@
 
     <button type="submit">Crea account</button>
 
+
+    <p class="auth-switch">
+      Hai già un account?
+
+      <a href="${pageContext.request.contextPath}/login.jsp">
+        Accedi
+      </a>
+
+    </p>
+
   </form>
 
 </div>

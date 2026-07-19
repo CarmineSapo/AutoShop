@@ -67,6 +67,38 @@
         I miei ordini
       </a>
 
+      <c:choose>
+
+        <c:when test="${sessionScope.user.role eq 'DEALER'}">
+
+          <a class="details-button"
+             href="${pageContext.request.contextPath}/dealer/vehicles">
+            I miei veicoli
+          </a>
+
+          <a class="details-button"
+             href="${pageContext.request.contextPath}/dealer/add-vehicle">
+            Aggiungi veicolo
+          </a>
+
+          <a class="details-button"
+             href="${pageContext.request.contextPath}/dealer-profile?id=${sessionScope.user.id}">
+            Profilo pubblico
+          </a>
+
+        </c:when>
+
+        <c:otherwise>
+
+          <a class="details-button"
+             href="#upgrade-dealer">
+            Diventa dealer
+          </a>
+
+        </c:otherwise>
+
+      </c:choose>
+
       <a class="details-button"
          href="${pageContext.request.contextPath}/logout">
         Logout
@@ -76,79 +108,15 @@
 
   </section>
 
-
-  <c:if test="${sessionScope.user.role eq 'DEALER'}">
-
-    <c:url var="publicDealerProfileUrl"
-           value="/dealer-profile">
-
-      <c:param name="id"
-               value="${sessionScope.user.id}"/>
-
-    </c:url>
-
-    <p>
-      <a class="details-button"
-         href="${publicDealerProfileUrl}">
-
-        Visualizza il mio profilo pubblico
-
-      </a>
-    </p>
-
-  </c:if>
-
   <%--
       Il form per diventare dealer viene mostrato
       soltanto agli utenti con ruolo CUSTOMER.
   --%>
 
-
-  <c:if test="${sessionScope.user.role eq 'DEALER'}">
-
-    <c:url var="publicDealerProfileUrl"
-           value="/dealer-profile">
-
-      <c:param name="id"
-               value="${sessionScope.user.id}"/>
-
-    </c:url>
-
-    <section class="profile-dealer-section">
-
-      <h2>Gestione concessionaria</h2>
-
-      <p>
-        Da questa sezione puoi gestire
-        le tue inserzioni.
-      </p>
-
-      <div class="profile-action-buttons">
-
-        <a class="details-button"
-           href="${pageContext.request.contextPath}/dealer/vehicles">
-          I miei veicoli
-        </a>
-
-        <a class="details-button"
-           href="${pageContext.request.contextPath}/dealer/add-vehicle">
-          Aggiungi veicolo
-        </a>
-
-        <a class="secondary-profile-link"
-           href="${publicDealerProfileUrl}">
-          Anteprima profilo pubblico
-        </a>
-
-      </div>
-
-    </section>
-
-  </c:if>
-
   <c:if test="${sessionScope.user.role eq 'CUSTOMER'}">
 
-    <section class="upgrade-dealer-section">
+    <section id="upgrade-dealer"
+             class="upgrade-dealer-section">
 
       <h2>Diventa dealer</h2>
 

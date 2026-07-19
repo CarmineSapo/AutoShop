@@ -22,19 +22,6 @@
 
     <h1>I miei veicoli</h1>
 
-    <div class="dealer-vehicles-actions">
-        <a class="details-button"
-           href="${pageContext.request.contextPath}/dealer/add-vehicle">
-            Aggiungi veicolo
-        </a>
-
-        <a class="details-button"
-           href="${pageContext.request.contextPath}/dealer/dashboard">
-            Trona alla dashboard
-        </a>
-
-    </div>
-
     <c:choose>
 
         <c:when test="${empty vehicles}">

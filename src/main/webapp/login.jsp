@@ -38,6 +38,17 @@
         <input type="password"  name="password" required>
 
         <button type="submit">Accedi</button>
+
+
+        <p class="auth-switch">
+            Non hai ancora un account?
+
+            <a href="${pageContext.request.contextPath}/register.jsp" title="Area registrazione">
+                Registrati
+            </a>
+
+        </p>
+
     </form>
 
 </div>
