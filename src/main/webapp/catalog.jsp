@@ -9,6 +9,7 @@
 
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
@@ -26,87 +27,55 @@
 
     <c:choose>
 
+        <%-- Pagina che mostra solamente il form dei filtri. --%>
         <c:when test="${param.showFilters eq 'true'}">
 
-           <h1>Cerca un veicolo</h1>
-
-            <c:if test="${not empty filterError}">
-                <p class="form-errors">
-                    ${filterError}
-                </p>
-            </c:if>
+            <h1>Filtra i veicoli</h1>
 
             <form action="${pageContext.request.contextPath}/catalog"
                   method="get"
                   class="catalog-filters">
 
-                <input type="hidden"
-                       name="showFilters"
-                       value="true">
-
                 <div class="form-group">
 
                     <label for="brand">Marca</label>
+
                     <input type="text"
                            id="brand"
                            name="brand"
-                           maxlength="50"
-                           value="${param.brand}"
+                           maxlength="50">
 
                 </div>
 
                 <div class="form-group">
 
-                    <label for="maxPrice">Prezzo Massimo</label>
+                    <label for="maxPrice">
+                        Prezzo massimo
+                    </label>
+
                     <input type="number"
                            id="maxPrice"
                            name="maxPrice"
                            min="1"
-                           step="0.01"
-                           value="${param.maxPrice}">
+                           step="0.01">
 
                 </div>
 
                 <div class="form-group">
 
-                    <label for="fuelType">Carburante</label>
+                    <label for="fuelType">
+                        Carburante
+                    </label>
+
                     <select id="fuelType"
                             name="fuelType">
 
-                        <option value="">
-                            Tutti
-                        </option>
-
-                        <option value="Benzina"
-                            ${param.fuelType eq 'Benzina'
-                                    ? 'selected' : ''}>
-                            Benzina
-                        </option>
-
-                        <option value="Diesel"
-                            ${param.fuelType eq 'Diesel'
-                                    ? 'selected' : ''}>
-                            Diesel
-                        </option>
-
-                        <option value="Elettrico"
-                            ${param.fuelType eq 'Elettrico'
-                                    ? 'selected' : ''}>
-                            Elettrico
-                        </option>
-
-                        <option value="Ibrido"
-                            ${param.fuelType eq 'Ibrido'
-                                    ? 'selected' : ''}>
-                            Ibrido
-                        </option>
-
-                        <option value="GPL"
-                            ${param.fuelType eq 'GPL'
-                                    ? 'selected' : ''}>
-                            GPL
-
-                        </option>
+                        <option value="">Tutti</option>
+                        <option value="Benzina">Benzina</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Elettrico">Elettrico</option>
+                        <option value="Ibrido">Ibrido</option>
+                        <option value="GPL">GPL</option>
 
                     </select>
 
@@ -114,26 +83,16 @@
 
                 <div class="form-group">
 
-                    <label for="transmission">Cambio</label>
+                    <label for="transmission">
+                        Cambio
+                    </label>
 
                     <select id="transmission"
                             name="transmission">
 
-                        <option value="">
-                            Tutti
-                        </option>
-
-                        <option value="Manuale"
-                            ${param.transmission eq 'Manuale'
-                                    ? 'selected' : ''}>
-                            Manuale
-                        </option>
-
-                        <option value="Automatico"
-                            ${param.transmission eq 'Automatico'
-                                    ? 'selected' : ''}>
-                            Automatico
-                        </option>
+                        <option value="">Tutti</option>
+                        <option value="Manuale">Manuale</option>
+                        <option value="Automatico">Automatico</option>
 
                     </select>
 
@@ -146,83 +105,109 @@
                         Applica filtri
                     </button>
 
-                    <a class="details-button"
-                       href="${pageContext.request.contextPath}/catalog?showFilters=true">
-                        Rimuovi filtri
-                    </a>
-
                 </div>
 
             </form>
 
         </c:when>
 
+        <%-- Home: mostra tutti i veicoli oppure i risultati filtrati. --%>
         <c:otherwise>
 
-            <h1>Veicoli disponibili</h1>
+            <h1>
+                    ${filtersApplied
+                            ? 'Veicoli filtrati'
+                            : 'Veicoli disponibili'}
+            </h1>
 
-        </c:otherwise>
+            <c:if test="${not empty filterError}">
 
-    </c:choose>
+                <div class="form-errors">
+                    <p>${filterError}</p>
+                </div>
 
-    <c:choose>
+            </c:if>
 
-        <c:when test="${empty vehicles}">
+            <%--
+                Il pulsante compare soltanto quando è stato
+                applicato almeno un filtro.
+            --%>
+            <c:if test="${filtersApplied}">
 
-            <p>Nessun veicolo disponibile.</p>
+                <div class="filters-reset-bar">
 
-        </c:when>
+                    <a class="details-button"
+                       href="${pageContext.request.contextPath}/catalog">
+                        Rimuovi filtri
+                    </a>
 
-        <c:otherwise>
+                </div>
 
-            <div class="vehicle-container">
+            </c:if>
 
-                <c:forEach var="vehicle"
-                           items="${vehicles}">
+            <c:choose>
 
-                    <div class="vehicle-card">
+                <c:when test="${empty vehicles}">
 
-                        <c:choose>
+                    <div class="empty-message">
+                        Nessun veicolo disponibile.
+                    </div>
 
-                            <c:when test="${not empty vehicle.imagePaths}">
+                </c:when>
 
-                                <img class="vehicle-card-image"
-                                     src="${pageContext.request.contextPath}/${vehicle.imagePaths[0]}"
-                                     alt="${vehicle.brand} ${vehicle.model}">
+                <c:otherwise>
 
-                            </c:when>
+                    <div class="vehicle-container">
 
-                            <c:otherwise>
+                        <c:forEach var="vehicle"
+                                   items="${vehicles}">
 
-                                <div class="vehicle-image-placeholder">
-                                    Nessuna immagine
-                                </div>
+                            <%--
+                                L'intera card è un collegamento
+                                alla pagina di dettaglio.
+                            --%>
+                            <a class="vehicle-card"
+                               href="${pageContext.request.contextPath}/vehicle?id=${vehicle.id}">
 
-                            </c:otherwise>
+                                <c:choose>
 
-                        </c:choose>
+                                    <c:when test="${not empty vehicle.imagePaths}">
 
-                        <h2>
-                                ${vehicle.brand} ${vehicle.model}
-                        </h2>
+                                        <img class="vehicle-card-image"
+                                             src="${pageContext.request.contextPath}/${vehicle.imagePaths[0]}"
+                                             alt="${vehicle.brand} ${vehicle.model}">
 
-                        <p>Anno: ${vehicle.productionYear}</p>
-                        <p>Km: ${vehicle.km}</p>
-                        <p>Carburante: ${vehicle.fuelType}</p>
-                        <p>Cambio: ${vehicle.transmission}</p>
-                        <p>Prezzo: € ${vehicle.price}</p>
-                        <p>Descrizione: ${vehicle.description}</p>
+                                    </c:when>
 
-                        <a class="details-button"
-                           href="${pageContext.request.contextPath}/vehicle?id=${vehicle.id}">
-                            Vedi dettagli
-                        </a>
+                                    <c:otherwise>
+
+                                        <div class="vehicle-image-placeholder">
+                                            Nessuna immagine
+                                        </div>
+
+                                    </c:otherwise>
+
+                                </c:choose>
+
+                                <h2>
+                                        ${vehicle.brand} ${vehicle.model}
+                                </h2>
+
+                                <p>Anno: ${vehicle.productionYear}</p>
+                                <p>Km: ${vehicle.km}</p>
+                                <p>Carburante: ${vehicle.fuelType}</p>
+                                <p>Cambio: ${vehicle.transmission}</p>
+                                <p>Prezzo: € ${vehicle.price}</p>
+
+                            </a>
+
+                        </c:forEach>
 
                     </div>
 
-                </c:forEach>
+                </c:otherwise>
 
-            </div>
+            </c:choose>
 
         </c:otherwise>
 

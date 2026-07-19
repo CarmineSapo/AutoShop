@@ -154,12 +154,6 @@
                     GPL
                 </option>
 
-                <option value="Metano"
-                ${param.fuelType eq 'Metano'
-                        ? 'selected' : ''}>
-                    Metano
-                </option>
-
             </select>
         </div>
 

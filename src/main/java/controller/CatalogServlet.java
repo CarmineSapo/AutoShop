@@ -27,6 +27,19 @@ public class CatalogServlet extends HttpServlet{
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException{
 
+        /*
+         * Quando l'utente apre la pagina Filtri
+         * mostriamo soltanto il form senza interrogare il database
+         */
+        if ("true".equals(request.getParameter("showFilters"))) {
+
+            request.getRequestDispatcher(
+                    "/catalog.jsp"
+            ).forward(request, response);
+
+            return;
+        }
+
         String brand = getParameter(request, "brand");
 
         String maxPriceParameter = getParameter(request, "maxPrice");
@@ -95,6 +108,17 @@ public class CatalogServlet extends HttpServlet{
             }
 
             request.setAttribute("vehicles", vehicles);
+
+            boolean filtersApplied =
+                    !brand.isEmpty()
+                            || maxPrice > 0
+                            || !fuelType.isEmpty()
+                            || !transmission.isEmpty();
+
+            request.setAttribute(
+                    "filtersApplied",
+                    filtersApplied
+            );
 
             request.getRequestDispatcher("/catalog.jsp")
                     .forward(request, response);

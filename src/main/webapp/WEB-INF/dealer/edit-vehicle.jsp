@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: gemel
-  Date: 14/07/2026
-  Time: 22:37
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <html>
@@ -152,12 +145,6 @@
                 ${vehicle.fuelType eq 'GPL'
                         ? 'selected' : ''}>
                     GPL
-                </option>
-
-                <option value="Metano"
-                ${vehicle.fuelType eq 'Metano'
-                        ? 'selected' : ''}>
-                    Metano
                 </option>
 
             </select>

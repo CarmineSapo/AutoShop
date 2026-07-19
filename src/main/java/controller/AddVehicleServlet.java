@@ -42,8 +42,7 @@ public class AddVehicleServlet extends HttpServlet{
                     "Diesel",
                     "Elettrico",
                     "Ibrido",
-                    "GPL",
-                    "Metano"
+                    "GPL"
             );
 
     private static final Set<String> ALLOWED_TRANSMISSIONS =

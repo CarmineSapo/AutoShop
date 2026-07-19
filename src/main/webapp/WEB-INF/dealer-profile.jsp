@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: gemel
-  Date: 17/07/2026
-  Time: 19:01
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8"
          pageEncoding="UTF-8"
          language="java" %>
@@ -102,7 +95,12 @@
           <c:forEach var="vehicle"
                      items="${vehicles}">
 
-            <article class="vehicle-card">
+            <%--
+                L'intera card è cliccabile e porta
+                al dettaglio del veicolo.
+            --%>
+            <a class="vehicle-card"
+               href="${pageContext.request.contextPath}/vehicle?id=${vehicle.id}">
 
               <c:choose>
 
@@ -124,15 +122,13 @@
 
               </c:choose>
 
-              <h3>
+              <h2>
                 <c:out value="${vehicle.brand}"/>
-
                 <c:out value="${vehicle.model}"/>
-              </h3>
+              </h2>
 
               <p>
                 <strong>Anno:</strong>
-
                 <c:out value="${vehicle.productionYear}"/>
               </p>
 
@@ -159,22 +155,7 @@
                         maxFractionDigits="2"/>
               </p>
 
-              <c:url var="vehicleUrl"
-                     value="/vehicle">
-
-                <c:param name="id"
-                         value="${vehicle.id}"/>
-
-              </c:url>
-
-              <a class="details-button"
-                 href="${vehicleUrl}">
-
-                Visualizza veicolo
-
-              </a>
-
-            </article>
+            </a>
 
           </c:forEach>
 
