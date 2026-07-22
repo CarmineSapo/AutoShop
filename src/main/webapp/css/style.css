@@ -306,6 +306,16 @@ a {
     overflow-wrap: anywhere;
 }
 
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid;
+    outline-offset: 3px;
+}
+
 .owner-vehicle-message {
     padding: 12px;
 
