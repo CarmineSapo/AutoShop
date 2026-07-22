@@ -35,8 +35,8 @@ public class EditVehicleServlet extends HttpServlet {
 
     private static final Set<String> ALLOWED_TRANSMISSIONS =
             Set.of(
-                    "Manuale",
-                    "Automatico"
+                    "MANUALE",
+                    "AUTOMATICA"
             );
 
 
@@ -173,6 +173,24 @@ public class EditVehicleServlet extends HttpServlet {
         if (model.isEmpty()) {
             errors.add(
                     "Il modello è obbligatorio."
+            );
+        }
+
+        if (brand.length() > 50) {
+            errors.add(
+                    "La marca non può superare 50 caratteri."
+            );
+        }
+
+        if (model.length() > 50) {
+            errors.add(
+                    "Il modello non può superare 50 caratteri."
+            );
+        }
+
+        if (description.length() > 2000) {
+            errors.add(
+                    "La descrizione non può superare 2000 caratteri."
             );
         }
 
@@ -331,7 +349,7 @@ public class EditVehicleServlet extends HttpServlet {
             return "";
         }
 
-        return value.trim();
+        return value.trim().replaceAll("\\s+", " ");
     }
 
     private Integer parsePositiveInteger(

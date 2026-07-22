@@ -107,6 +107,30 @@ public class UpgradeToDealerServlet extends HttpServlet {
             );
         }
 
+        if (companyName.length() > 100) {
+            errors.add(
+                    "Il nome della concessionaria non può superare 100 caratteri."
+            );
+        }
+
+        if (phone.length() > 20) {
+            errors.add(
+                    "Il telefono non può superare 20 caratteri."
+            );
+        }
+
+        if (address.length() > 255) {
+            errors.add(
+                    "L'indirizzo non può superare 255 caratteri."
+            );
+        }
+
+        if (description.length() > 1000) {
+            errors.add(
+                    "La descrizione non può superare 1000 caratteri."
+            );
+        }
+
         if (!errors.isEmpty()) {
             request.setAttribute(
                     "upgradeErrors",

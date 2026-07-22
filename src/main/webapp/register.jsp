@@ -33,14 +33,30 @@
 
   <form action="${pageContext.request.contextPath}/register" method="post">
 
-    <label>Username</label>
-    <input type="text" name="username" required>
+    <label for="username">Username</label>
+    <input type="text"
+           id="username"
+           name="username"
+           minlength="3"
+           maxlength="30"
+           value="<c:out value='${param.username}'/>"
+           required>
 
-    <label>Email</label>
-    <input type="email" name="email" required>
+    <label for="email">Email</label>
+    <input type="email"
+           id="email"
+           name="email"
+           maxlength="100"
+           value="<c:out value='${param.email}'/>"
+           required>
 
-    <label>Password</label>
-    <input type="password" name="password" required>
+    <label for="password">Password</label>
+    <input type="password"
+           id="password"
+           name="password"
+           minlength="8"
+           maxlength="72"
+           required>
 
     <button type="submit">Crea account</button>
 

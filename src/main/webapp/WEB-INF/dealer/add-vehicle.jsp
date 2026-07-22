@@ -120,7 +120,8 @@
                     name="fuelType"
                     required>
 
-                <option value="">
+                <option value=""
+                    disabled>
                     Seleziona
                 </option>
 
@@ -166,18 +167,19 @@
                     name="transmission"
                     required>
 
-                <option value="">
+                <option value=""
+                    disabled>
                     Seleziona
                 </option>
 
-                <option value="Manuale"
-                ${param.transmission eq 'Manuale'
+                <option value="MANUALE"
+                ${param.transmission eq 'MANUALE'
                         ? 'selected' : ''}>
                     Manuale
                 </option>
 
-                <option value="Automatico"
-                ${param.transmission eq 'Automatico'
+                <option value="AUTOMATICA"
+                ${param.transmission eq 'AUTOMATICA'
                         ? 'selected' : ''}>
                     Automatico
                 </option>

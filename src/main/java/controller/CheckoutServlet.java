@@ -1,7 +1,7 @@
 package controller;
 
 
-import com.example.autoshop.HelloServlet;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

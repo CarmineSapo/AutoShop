@@ -47,6 +47,8 @@ public class AddToCartServlet extends HttpServlet {
                         HttpServletResponse.SC_FORBIDDEN,
                         "Non puoi aggiungere al carrello un tuo veicolo."
                 );
+
+                return;
             }
 
             HttpSession session = request.getSession();

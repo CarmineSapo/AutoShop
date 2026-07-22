@@ -167,14 +167,14 @@
                     Seleziona
                 </option>
 
-                <option value="Manuale"
-                ${vehicle.transmission eq 'Manuale'
+                <option value="MANUALE"
+                ${vehicle.transmission eq 'MANUALE'
                         ? 'selected' : ''}>
                     Manuale
                 </option>
 
-                <option value="Automatico"
-                ${vehicle.transmission eq 'Automatico'
+                <option value="AUTOMATICA"
+                ${vehicle.transmission eq 'AUTOMATICA'
                         ? 'selected' : ''}>
                     Automatico
                 </option>

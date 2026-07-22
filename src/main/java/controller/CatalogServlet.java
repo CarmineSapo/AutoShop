@@ -50,6 +50,15 @@ public class CatalogServlet extends HttpServlet{
 
         double maxPrice = 0; // Il valore 0 di maxPrice significa che il filtro non è satto applicato
 
+        if (brand.length() > 50) {
+            request.setAttribute(
+                    "filterError",
+                    "La marca non può superare 50 caratteri."
+            );
+
+            brand = "";
+        }
+
         if(!maxPriceParameter.isEmpty()) {
             try {
                 maxPrice = Double.parseDouble(maxPriceParameter);
@@ -154,7 +163,7 @@ public class CatalogServlet extends HttpServlet{
 
     private boolean isValidTransmission(String transmission){
         return transmission.isEmpty()
-                ||transmission.equals("Manuale")
-                ||transmission.equals("Automatico");
+                ||transmission.equals("MANUALE")
+                ||transmission.equals("AUTOMATICA");
     }
 }

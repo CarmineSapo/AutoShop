@@ -34,7 +34,23 @@ public class VehicleDetailsServlet extends HttpServlet {
         }
 
         try{
-            int id = Integer.parseInt(idParam);
+            int id;
+
+            try {
+                id = Integer.parseInt(idParam);
+
+                if (id <= 0) {
+                    throw new NumberFormatException();
+                }
+
+            } catch (NumberFormatException e) {
+                response.sendError(
+                        HttpServletResponse.SC_BAD_REQUEST,
+                        "ID del veicolo non valido"
+                );
+
+                return;
+            }
 
             Vehicle vehicle = vehicleDao.getVehicleById(id);
 

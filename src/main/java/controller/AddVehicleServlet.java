@@ -32,6 +32,7 @@ import java.util.UUID;
 )
 public class AddVehicleServlet extends HttpServlet{
 
+
     private final VehicleDAO vehicleDAO = new VehicleDAO();
 
     private final VehicleImageDAO vehicleImageDAO = new VehicleImageDAO();
@@ -47,8 +48,8 @@ public class AddVehicleServlet extends HttpServlet{
 
     private static final Set<String> ALLOWED_TRANSMISSIONS =
             Set.of(
-                   "Manuale",
-                   "Automatico"
+                   "MANUALE",
+                   "AUTOMATICA"
             );
 
 
@@ -136,6 +137,24 @@ public class AddVehicleServlet extends HttpServlet{
 
         if (model.isEmpty()) {
             errors.add("Il modello è obbligatorio.");
+        }
+
+        if (brand.length() > 50) {
+            errors.add(
+                    "La marca non può superare 50 caratteri."
+            );
+        }
+
+        if (model.length() > 50) {
+            errors.add(
+                    "Il modello non può superare 50 caratteri."
+            );
+        }
+
+        if (description.length() > 2000) {
+            errors.add(
+                    "La descrizione non può superare 2000 caratteri."
+            );
         }
 
         int productionYear = 0;
@@ -253,6 +272,12 @@ public class AddVehicleServlet extends HttpServlet{
                     e
             );
         }
+
+
+        String realPath = getServletContext()
+                .getRealPath("/uploads");
+
+
     }
 
 
@@ -290,22 +315,20 @@ public class AddVehicleServlet extends HttpServlet{
     }
 
 
+    /*
+     * Salva fisicamente le immagini nella cartella
+     * esterna autoshop-images e registra nel database
+     * il loro percorso pubblico.
+     */
     private void saveVehicleImages(
             List<Part> imageParts,
             int vehicleId
     ) throws IOException, SQLException {
 
-        String uploadDirectory =
-                getServletContext().getRealPath(
-                        "/uploads/vehicles"
-                );
+        Path uploadDirectory =
+                getVehicleUploadDirectory();
 
-        Path uploadPath =
-                Path.of(uploadDirectory);
-
-        Files.createDirectories(uploadPath);
-
-        int sortOrder = 1;
+        int displayOrder = 1;
 
         for (Part imagePart : imageParts) {
 
@@ -314,11 +337,15 @@ public class AddVehicleServlet extends HttpServlet{
                             imagePart.getContentType()
                     );
 
+            /*
+             * UUID genera un nome praticamente unico,
+             * evitando sovrascritture tra file con lo stesso nome.
+             */
             String fileName =
                     UUID.randomUUID() + extension;
 
             Path destination =
-                    uploadPath.resolve(fileName);
+                    uploadDirectory.resolve(fileName);
 
             try (InputStream inputStream =
                          imagePart.getInputStream()) {
@@ -329,16 +356,20 @@ public class AddVehicleServlet extends HttpServlet{
                 );
             }
 
-            String databasePath =
-                    "uploads/vehicles/" + fileName;
+            /*
+             * Nel database non salviamo il percorso fisico
+             * C:\...\Tomcat\..., ma solamente l'URL pubblico.
+             */
+            String imagePath =
+                    "uploads/" + fileName;
 
             vehicleImageDAO.insertImage(
                     vehicleId,
-                    databasePath,
-                    sortOrder
+                    imagePath,
+                    displayOrder
             );
 
-            sortOrder++;
+            displayOrder++;
         }
     }
 
@@ -354,6 +385,30 @@ public class AddVehicleServlet extends HttpServlet{
         }
 
         return ".jpg";
+    }
+
+
+    /*
+     * Restituisce la cartella nella quale
+     * vengono salvate le immagini caricate.
+     */
+    private Path getVehicleUploadDirectory()
+            throws IOException {
+
+        String realPath = getServletContext()
+                .getRealPath("/uploads");
+
+        if (realPath == null) {
+            throw new IOException(
+                    "Impossibile trovare la cartella uploads."
+            );
+        }
+
+        Path uploadDirectory = Path.of(realPath);
+
+        Files.createDirectories(uploadDirectory);
+
+        return uploadDirectory;
     }
 
 

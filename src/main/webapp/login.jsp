@@ -31,11 +31,19 @@
 
     <form action="${pageContext.request.contextPath}/login" method="post">
 
-        <label>Email</label>
-        <input type="email" name="email" required>
+        <label for="loginEmail">Email</label>
+        <input type="email"
+               id="loginEmail"
+               name="email"
+               maxlength="100"
+               required>
 
-        <label>Password</label>
-        <input type="password"  name="password" required>
+        <label for="loginPassword">Password</label>
+        <input type="password"
+               id="loginPassword"
+               name="password"
+               maxlength="72"
+               required>
 
         <button type="submit">Accedi</button>
 

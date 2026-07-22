@@ -91,8 +91,8 @@
                             name="transmission">
 
                         <option value="">Tutti</option>
-                        <option value="Manuale">Manuale</option>
-                        <option value="Automatico">Automatico</option>
+                        <option value="MANUALE">Manuale</option>
+                        <option value="AUTOMATICA">Automatico</option>
 
                     </select>
 

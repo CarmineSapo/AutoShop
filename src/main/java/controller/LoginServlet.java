@@ -1,6 +1,5 @@
 package controller;
 
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,38 +19,144 @@ public class LoginServlet extends HttpServlet {
     private final UserDAO userDAO = new UserDAO();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException{
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        request.setCharacterEncoding("UTF-8");
 
+        String email =
+                request.getParameter("email");
+
+        String password =
+                request.getParameter("password");
+
+        if (email != null) {
+            email = email.trim();
+        }
+
+        /*
+         * Controllo dei campi obbligatori.
+         */
         if (email == null || email.isBlank()
-        || password == null || password.isBlank()){
+                || password == null || password.isBlank()) {
 
-            response.sendRedirect(request.getContextPath() +"/login.jsp");
+            showError(
+                    request,
+                    response,
+                    "Email e password sono obbligatorie."
+            );
+
             return;
         }
 
-        try{
+        if (email.length() > 100) {
 
-            User user = userDAO.findByEmail(email);
+            showError(
+                    request,
+                    response,
+                    "L'email non può superare 100 caratteri."
+            );
 
-            if (user == null || !BCrypt.checkpw(password, user.getPasswordHash())){
+            return;
+        }
 
-                request.setAttribute("error", "Email o password non corretti");
-                request.getRequestDispatcher("/login.jsp")
-                        .forward(request, response);
+        if (!isEmailValid(email)) {
+
+            showError(
+                    request,
+                    response,
+                    "Il formato dell'email non è valido."
+            );
+
+            return;
+        }
+
+        if (password.length() > 72) {
+
+            showError(
+                    request,
+                    response,
+                    "La password non può superare 72 caratteri."
+            );
+
+            return;
+        }
+
+        try {
+
+            User user =
+                    userDAO.findByEmail(email);
+
+            /*
+             * Il messaggio rimane generico:
+             * non comunichiamo quale dei due
+             * dati è sbagliato.
+             */
+            if (user == null
+                    || !BCrypt.checkpw(
+                    password,
+                    user.getPasswordHash()
+            )) {
+
+                showError(
+                        request,
+                        response,
+                        "Email o password non corretti."
+                );
+
                 return;
             }
 
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
+            HttpSession session =
+                    request.getSession();
 
-            response.sendRedirect(request.getContextPath() + "/catalog");
+            session.setAttribute(
+                    "user",
+                    user
+            );
+
+            response.sendRedirect(
+                    request.getContextPath()
+                            + "/catalog"
+            );
+
         } catch (SQLException e) {
-            throw new ServletException("errore durante il login", e);
-        }
 
+            throw new ServletException(
+                    "Errore durante il login",
+                    e
+            );
+        }
+    }
+
+    private boolean isEmailValid(String email) {
+
+        int atPosition =
+                email.indexOf('@');
+
+        int dotPosition =
+                email.lastIndexOf('.');
+
+        return atPosition > 0
+                && dotPosition > atPosition + 1
+                && dotPosition < email.length() - 1;
+    }
+
+    private void showError(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String message
+    ) throws ServletException, IOException {
+
+        request.setAttribute(
+                "error",
+                message
+        );
+
+        request.getRequestDispatcher(
+                "/login.jsp"
+        ).forward(request, response);
     }
 }

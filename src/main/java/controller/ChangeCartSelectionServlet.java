@@ -71,6 +71,26 @@ public class ChangeCartSelectionServlet
             return;
         }
 
+        if (vehicleId <= 0) {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST
+            );
+
+            return;
+        }
+
+        if (!"true".equals(selectedParameter)
+                && !"false".equals(selectedParameter)) {
+
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST
+            );
+
+            return;
+        }
+
+
+
         boolean selected =
                 Boolean.parseBoolean(
                         selectedParameter
