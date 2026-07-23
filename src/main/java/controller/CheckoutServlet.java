@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 @WebServlet("/checkout")
-public class CheckoutServlet extends HttpServlet {
+public class  CheckoutServlet extends HttpServlet {
 
     private final OrderDAO orderDAO = new OrderDAO();
 

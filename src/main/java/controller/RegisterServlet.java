@@ -181,10 +181,6 @@ public class RegisterServlet extends HttpServlet {
         }
     }
 
-    /*
-     * Controllo volutamente semplice,
-     * senza espressioni regolari.
-     */
     private boolean isEmailValid(String email) {
 
         int atPosition =

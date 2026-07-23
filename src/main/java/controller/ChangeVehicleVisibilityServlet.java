@@ -24,11 +24,7 @@ public class ChangeVehicleVisibilityServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        /*
-         * Anche se esiste il DealerAuthorizationFilter,
-         * ripetiamo tutti i controlli nella Servlet,
-         * come richiesto dalle linee guida del progetto.
-         */
+
         User dealer =
                 (User) request.getAttribute(DealerAuthorizationFilter.DEALER_ATTRIBUTE);
 
@@ -66,7 +62,6 @@ public class ChangeVehicleVisibilityServlet extends HttpServlet {
 
         try {
             /*
-             * Controllo effettuato nella Servlet:
              * il veicolo deve esistere e appartenere
              * al dealer autenticato.
              */

@@ -117,6 +117,14 @@ public class LoginServlet extends HttpServlet {
                     user
             );
 
+            /*
+             * Un dealer non deve conservare il carrello
+             * creato prima dell'autenticazione.
+             */
+            if ("DEALER".equals(user.getRole())) {
+                session.removeAttribute("cart");
+            }
+
             response.sendRedirect(
                     request.getContextPath()
                             + "/catalog"

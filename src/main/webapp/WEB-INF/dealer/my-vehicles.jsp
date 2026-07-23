@@ -1,10 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: gemel
-  Date: 13/07/2026
-  Time: 21:10
-  To change this template use File | Settings | File Templates.
---%>
+<!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <html>
